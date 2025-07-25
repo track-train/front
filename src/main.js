@@ -1,4 +1,4 @@
-import './assets/main.css'
+import '@/assets/main.scss'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
@@ -13,21 +13,40 @@ import App from './App.vue'
 import router from './router'
 
 const vuetify = createVuetify({
+  ssr: true,
   components,
   directives,
   icons: {
     defaultSet: 'mdi',
     aliases,
     sets: {
-      mdi, 
+      mdi,
+    },
+  },
+  aliases: {
+    PrimaryButton: components.VBtn,
+    SecondaryButton: components.VBtn,
+  },
+  defaults: {
+    VCard: {
+      class: 'card-class',
+    },
+    PrimaryButton: {
+      class: 'primary-button',
+      elevation: '0',
+    },
+    SecondaryButton: {
+      class: 'secondary-button',
+      elevation: '0',
+    },
+    VTextField: {
+      variant: 'outlined',
+      hideDetails: 'auto',
+      density: 'compact',
     },
   },
 })
 
 const pinia = createPinia()
 
-createApp(App)
-  .use(vuetify)
-  .use(pinia)
-  .use(router)
-  .mount('#app')
+createApp(App).use(vuetify).use(pinia).use(router).mount('#app')
