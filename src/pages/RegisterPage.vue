@@ -25,7 +25,7 @@
             </VCol>
             <VCol cols="12">
               <VTextField
-                v-model="password"
+                v-model="confirmPassword"
                 label="Confirmer le mot de passe"
                 type="password"
                 rounded="0.5rem"
@@ -57,6 +57,7 @@ import { useRouter } from 'vue-router'
 
 const email = ref('')
 const password = ref('')
+const confirmPassword = ref('')
 const authStore = useAuthStore()
 const router = useRouter()
 
