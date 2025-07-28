@@ -129,6 +129,7 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64/v8
+          target: prod
           tags: |
             ghcr.io/track-train/front:${{ needs.versioning.outputs.version }}
             ghcr.io/track-train/front:latest
