@@ -25,8 +25,6 @@ export const useAuthStore = defineStore('auth', {
         snackbar.success(`Bienvenue ${this.user?.name || email} !`)
       } catch (err) {
         console.error('Erreur de connexion', err)
-        console.log(err.response.message)
-        console.log(err.response.status)
         if (err.response?.status === 401) {
           this.error = 'Identifiants incorrects. Veuillez réessayer.'
         } else {
