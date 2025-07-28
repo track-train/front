@@ -40,7 +40,6 @@ export const useAuthStore = defineStore('auth', {
     logout() {
       this.token = null
       this.user = null
-      this.error = null
       localStorage.removeItem('token')
 
       const snackbar = useSnackbarStore()
