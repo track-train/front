@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import api from '@/plugins/axios'
+import { useSnackbarStore } from '@/stores/snackbar'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
@@ -13,6 +14,7 @@ export const useAuthStore = defineStore('auth', {
     async login(email, password) {
       this.loading = true
       this.error = null
+      const snackbar = useSnackbarStore()
       try {
         const response = await api.post('/profiles/login', { email, password })
         this.token = response.data.access_token
@@ -20,15 +22,18 @@ export const useAuthStore = defineStore('auth', {
 
         this.user = response.data.user || null
         this.error = null
+        snackbar.success(`Bienvenue ${this.user?.name || email} !`)
       } catch (err) {
         console.error('Erreur de connexion', err)
-        if (err.response?.data?.message) {
-          this.error = err.response.data.message
+        console.log(err.response.message)
+        console.log(err.response.status)
+        if (err.response?.status === 401) {
+          this.error = 'Identifiants incorrects. Veuillez réessayer.'
         } else {
-          this.error = 'Erreur de connexion'
+          this.error = 'Une erreur est survenue lors de la connexion. Veuillez réessayer.'
         }
         this.token = null
-        this.error = null
+        snackbar.error(this.error)
       } finally {
         this.loading = false
       }
@@ -39,10 +44,14 @@ export const useAuthStore = defineStore('auth', {
       this.user = null
       this.error = null
       localStorage.removeItem('token')
+
+      const snackbar = useSnackbarStore()
+      snackbar.info('Vous avez été déconnecté.')
     },
 
     async fetchUser() {
       if (!this.token) return
+      const snackbar = useSnackbarStore()
       try {
         const response = await api.get('/me')
         this.user = response.data
@@ -50,6 +59,7 @@ export const useAuthStore = defineStore('auth', {
       } catch (err) {
         console.error('Erreur fetch user', err)
         if (err.response?.status === 401) {
+          snackbar.error('Session expirée, veuillez vous reconnecter.')
           this.logout()
         }
       }
