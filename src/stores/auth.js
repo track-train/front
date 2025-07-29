@@ -19,7 +19,6 @@ export const useAuthStore = defineStore('auth', {
         const response = await api.post('/profiles/login', { email, password })
         this.token = response.data.access_token
         localStorage.setItem('token', this.token)
-
         this.user = response.data.user || null
         this.error = null
         snackbar.success(`Bienvenue ${this.user?.name || email} !`)
