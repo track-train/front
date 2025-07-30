@@ -64,11 +64,11 @@ const filteredUsers = computed(() => {
 
   const query = searchQuery.value.toLowerCase()
   return users.value.filter(
-    (user) => user.email.toLowerCase().includes(query) || user.name.toLowerCase().includes(query),
+    (user) => user.email.toLowerCase().includes(query) || user.name?.toLowerCase().includes(query),
   )
 })
 
-const coaches = computed(() => users.value.filter((user) => user.roles.includes('coach')))
+const coaches = computed(() => users.value.filter((user) => user.roles?.includes('coach')))
 
 const fetchUsers = async () => {
   loading.value = true

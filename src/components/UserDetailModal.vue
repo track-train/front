@@ -2,7 +2,7 @@
   <v-dialog v-model="localShow" max-width="600px">
     <v-card>
       <v-card-title>
-        <span class="text-h5, d-flex">Détails de l'utilisateur</span>
+        <span class="text-h5 d-flex">Détails de l'utilisateur</span>
         <v-spacer />
         <v-btn icon @click="localShow = false">
           <v-icon>mdi-close</v-icon>
@@ -345,10 +345,15 @@ const onFieldBlur = async (field) => {
 }
 
 const onSelectChange = async (field) => {
-  // Pour les selects, sauvegarder immédiatement
-  if (JSON.stringify(editedUser.value[field]) !== JSON.stringify(originalUser.value[field])) {
-    await saveField(field)
+  if (
+    Array.isArray(editedUser.value[field]) &&
+    Array.isArray(originalUser.value[field]) &&
+    editedUser.value[field].length === originalUser.value[field].length &&
+    editedUser.value[field].every((value, index) => value === originalUser.value[field][index])
+  ) {
+    return
   }
+  await saveField(field)
 }
 
 const onPasswordBlur = async () => {
