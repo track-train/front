@@ -21,7 +21,7 @@ export function useAuthGuard() {
 
     if (!auth.hasRole(role)) {
       snackbar.error(`Accès refusé. Vous devez avoir le rôle ${role}.`)
-      router.push('/') // Redirection vers l'accueil
+      router.push('/')
       return false
     }
     return true
