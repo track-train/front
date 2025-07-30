@@ -13,6 +13,9 @@ export const useAuthStore = defineStore('auth', {
   getters: {
     isAuthenticated: (state) => !!state.token && !!state.user,
     hasRole: (state) => (role) => state.user?.roles?.includes(role) || false,
+    isAdmin: (state) => state.user?.roles?.includes('admin') || false,
+    isCoach: (state) => state.user?.roles?.includes('coach') || false,
+    userRoles: (state) => state.user?.roles || [],
   },
 
   actions: {
