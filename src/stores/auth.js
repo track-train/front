@@ -10,7 +10,21 @@ export const useAuthStore = defineStore('auth', {
     error: null,
   }),
 
+  getters: {
+    isAuthenticated: (state) => !!state.token && !!state.user,
+    hasRole: (state) => (role) => state.user?.roles?.includes(role) || false,
+  },
+
   actions: {
+    async initialize() {
+      if (this.initialized) return
+      this.initialized = true
+
+      if (this.token) {
+        await this.fetchUser()
+      }
+    },
+
     async login(email, password) {
       this.loading = true
       this.error = null
@@ -19,8 +33,7 @@ export const useAuthStore = defineStore('auth', {
         const response = await api.post('/profiles/login', { email, password })
         this.token = response.data.access_token
         localStorage.setItem('token', this.token)
-        this.user = response.data.user || null
-        this.error = null
+        await this.fetchUser()
         snackbar.success(`Bienvenue ${this.user?.name || email} !`)
       } catch (err) {
         console.error('Erreur de connexion', err)
@@ -48,8 +61,9 @@ export const useAuthStore = defineStore('auth', {
     async fetchUser() {
       if (!this.token) return
       const snackbar = useSnackbarStore()
+
       try {
-        const response = await api.get('/me')
+        const response = await api.get('/profiles/me')
         this.user = response.data
         this.error = null
       } catch (err) {
