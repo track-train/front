@@ -43,7 +43,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 
-const props = defineProps({
+defineProps({
   trainings: {
     type: Array,
     default: () => [],
