@@ -21,13 +21,13 @@ const routes = [
   {
     path: '/dashboard',
     name: 'dashboard',
-    component: () => import('@/pages/DashboardPage.vue'),
+    component: () => import('@/pages/training/DashboardPage.vue'),
     meta: { requiresAuth: true },
   },
   {
     path: '/admin',
     name: 'adminPanel',
-    component: () => import('@/pages/AdminPanelPage.vue'),
+    component: () => import('@/pages/training/AdminPanelPage.vue'),
     meta: { requiresAuth: true, requiresRole: 'admin' },
   },
 ]
