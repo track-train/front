@@ -30,6 +30,26 @@ const routes = [
     component: () => import('@/pages/training/AdminPanelPage.vue'),
     meta: { requiresAuth: true, requiresRole: 'admin' },
   },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: () => import('@/pages/ProfilePage.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/training/:id',
+    name: 'trainingsDetails',
+    component: () => import('@/pages/training/TrainingDetails.vue'),
+    meta: { requiresAuth: true },
+    props: true,
+  },
+  {
+    path: '/diet/:id',
+    name: 'dietDetails',
+    component: () => import('@/pages/diet/DietDetails.vue'),
+    meta: { requiresAuth: true },
+    props: true,
+  },
 ]
 
 const router = createRouter({
