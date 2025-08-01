@@ -57,12 +57,19 @@ const router = createRouter({
   routes,
 })
 
+let fetchUserPromise = null
+
 router.beforeEach(async (to, from, next) => {
   const auth = useAuthStore()
   const navigation = useNavigationStore()
 
-  if (auth.token && !auth.user && !auth.loading) {
-    await auth.fetchUser()
+  if (auth.token && !auth.user) {
+    if (!fetchUserPromise) {
+      fetchUserPromise = auth.fetchUser().finally(() => {
+        fetchUserPromise = null
+      })
+    }
+    await fetchUserPromise
   }
 
   if (to.meta.requiresAuth && !auth.isAuthenticated) {
