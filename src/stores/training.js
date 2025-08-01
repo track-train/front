@@ -42,11 +42,11 @@ export const useTrainingStore = defineStore('training', {
       return Math.round((totalDifficulty / validationsWithDifficulty.length) * 10) / 10
     },
 
-    getOverallTrainingDifficulty: (state) => {
+    getOverallTrainingDifficulty: (state, getters) => {
       if (!state.tasks.length) return 0
 
       const taskDifficulties = state.tasks
-        .map((task) => state.getAverageDifficultyForTask(task.id))
+        .map((task) => getters.getAverageDifficultyForTask(task.id))
         .filter((difficulty) => difficulty > 0)
 
       if (taskDifficulties.length === 0) return 0
