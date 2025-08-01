@@ -401,26 +401,13 @@ const filteredValidations = computed(() => {
 
   endDate.setHours(23, 59, 59, 999)
 
-  console.log('Filtering validations:', {
-    dateRange: dateRange.value,
-    startDate: startDate.toISOString(),
-    endDate: endDate.toISOString(),
-    totalValidations: sortedValidations.value.length,
-  })
-
   const filtered = sortedValidations.value.filter((validation) => {
     const validationDate = new Date(validation.succeeded_at)
     const isInRange = validationDate >= startDate && validationDate <= endDate
 
-    console.log('Validation:', {
-      date: validationDate.toISOString(),
-      inRange: isInRange,
-    })
-
     return isInRange
   })
 
-  console.log('Filtered validations:', filtered.length)
   return filtered
 })
 
@@ -556,8 +543,6 @@ const openDatePicker = () => {
 }
 
 const onDatePickerChange = (selectedDates) => {
-  console.log('Date picker change:', selectedDates)
-
   if (!selectedDates || selectedDates.length === 0) {
     tempDateRange.value = []
     return
@@ -572,8 +557,6 @@ const onDatePickerChange = (selectedDates) => {
 }
 
 const applyDateFilter = () => {
-  console.log('Applying date filter:', tempDateRange.value)
-
   if (tempDateRange.value.length === 0) {
     dateRange.value = []
   } else if (tempDateRange.value.length === 1) {

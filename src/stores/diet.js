@@ -74,10 +74,8 @@ export const useDietStore = defineStore('diet', {
       }
 
       try {
-        console.log(`Fetching macro plans for diet: ${dietId}, user: ${userId}`)
         const response = await api.get(`/diets/${dietId}/user/${userId}/macro_plans`)
         this.macroPlans = response.data || []
-        console.log('Macro plans fetched:', this.macroPlans)
         return response.data
       } catch (error) {
         this.error = 'Erreur lors du chargement des macro plans'
@@ -103,10 +101,8 @@ export const useDietStore = defineStore('diet', {
       }
 
       try {
-        console.log(`Fetching meal plans for diet: ${dietId}, user: ${userId}`)
         const response = await api.get(`/diets/${dietId}/user/${userId}/meal_plans`)
         this.mealPlans = response.data || []
-        console.log('Meal plans fetched:', this.mealPlans)
         return response.data
       } catch (error) {
         this.error = 'Erreur lors du chargement des meal plans'

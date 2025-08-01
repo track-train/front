@@ -76,7 +76,7 @@ const handleLogin = async () => {
       router.push('/login')
     })
     .catch((error) => {
-      console.log('Error creating account:', error)
+      console.error('Error creating account:', error)
       snackbarStore.error(error.response?.data?.message || 'Erreur lors de la création du compte')
     })
 }

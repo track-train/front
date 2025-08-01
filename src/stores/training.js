@@ -58,8 +58,6 @@ export const useTrainingStore = defineStore('training', {
 
   actions: {
     calculateDifficulty(validation) {
-      console.log('Calculating difficulty for validation:', validation) // Debug log
-
       if (!validation.repetitions || !validation.set_number || validation.rir === undefined) {
         console.warn('Missing values for difficulty calculation:', {
           repetitions: validation.repetitions,
@@ -86,17 +84,6 @@ export const useTrainingStore = defineStore('training', {
       const finalScore = repsScore * REPS_WEIGHT + setsScore * SETS_WEIGHT + rirScore * RIR_WEIGHT
 
       const difficulty = Math.max(1, Math.min(10, Math.round(finalScore * 9 + 1)))
-
-      console.log('Difficulty calculation:', {
-        validation: {
-          repetitions: validation.repetitions,
-          set_number: validation.set_number,
-          rir: validation.rir,
-        },
-        scores: { repsScore, setsScore, rirScore },
-        finalScore,
-        difficulty,
-      })
 
       return difficulty
     },
@@ -139,8 +126,6 @@ export const useTrainingStore = defineStore('training', {
         const response = await api.get(`/trainings/${trainingId}/validations`)
         const allValidations = response.data || []
 
-        console.log('Fetched validations:', allValidations) // Debug log
-
         this.validations = {}
 
         if (this.tasks.length === 0) {
@@ -157,10 +142,6 @@ export const useTrainingStore = defineStore('training', {
           const calculatedDifficulty = this.calculateDifficulty(validation)
           validation.calculated_difficulty = calculatedDifficulty
 
-          console.log(
-            `Calculated difficulty for validation ${validation.id}: ${calculatedDifficulty}`,
-          )
-
           this.validations[taskId].push(validation)
         })
 
@@ -169,8 +150,6 @@ export const useTrainingStore = defineStore('training', {
             (a, b) => new Date(b.succeeded_at) - new Date(a.succeeded_at),
           )
         })
-
-        console.log('Processed validations:', this.validations)
 
         return allValidations
       } catch (error) {
@@ -190,12 +169,8 @@ export const useTrainingStore = defineStore('training', {
           validationData,
         )
 
-        console.log('Created validation response:', response.data) // Debug log
-
         const calculatedDifficulty = this.calculateDifficulty(response.data)
         response.data.calculated_difficulty = calculatedDifficulty
-
-        console.log(`Calculated difficulty for new validation: ${calculatedDifficulty}`) // Debug log
 
         if (!this.validations[taskId]) {
           this.validations[taskId] = []
@@ -223,7 +198,6 @@ export const useTrainingStore = defineStore('training', {
           )
         }
 
-        console.log(`Validation ${validationId} supprimée avec succès`)
         return true
       } catch (error) {
         console.error('Error deleting validation:', error)
