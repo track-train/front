@@ -37,9 +37,9 @@ export const useDietStore = defineStore('diet', {
       return state.mealPlans.reduce((total, plan) => total + (plan.meals?.length || 0), 0)
     },
 
-    averageMealsPerPlan: (state) => {
+    averageMealsPerPlan: (state, getters) => {
       if (!state.mealPlans.length) return 0
-      return Math.round(state.totalMealsCount / state.mealPlans.length)
+      return Math.round(getters.totalMealsCount / state.mealPlans.length)
     },
   },
 

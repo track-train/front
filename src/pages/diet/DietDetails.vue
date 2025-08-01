@@ -143,10 +143,6 @@ const activeTab = ref('macro')
 
 const dietId = computed(() => route.params.id)
 
-const isLoading = computed(() => {
-  return dietStore.loading.macroPlans || dietStore.loading.mealPlans
-})
-
 const goBack = () => {
   router.push('/')
 }
