@@ -1,19 +1,21 @@
 <template>
-  <v-card class="mx-auto my-8" elevation="16" max-width="344">
-    <v-card-item>
-      <v-card-title>
-        {{ name }}
-      </v-card-title>
-
-      <v-card-subtitle>
-        {{ description }}
-      </v-card-subtitle>
-    </v-card-item>
+  <v-card class="coach-card" elevation="2" hover>
+    <v-card-title class="text-h6">
+      {{ name }}
+    </v-card-title>
+    <v-card-text>
+      <p class="text-body-2">{{ description }}</p>
+    </v-card-text>
+    <v-card-actions>
+      <v-btn color="primary" @click="selectCoach"> Choisir ce coach </v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
 <script setup>
-defineProps({
+import { useRouter } from 'vue-router'
+
+const props = defineProps({
   name: {
     type: String,
     required: true,
@@ -22,25 +24,30 @@ defineProps({
     type: String,
     required: true,
   },
+  id: {
+    type: String,
+    default: null,
+  },
 })
+
+const router = useRouter()
+
+const selectCoach = () => {
+  if (props.id) {
+    router.push(`/coach/${props.id}`)
+  }
+}
 </script>
 
 <style scoped>
 .coach-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 16px;
-  background: #fff;
-  max-width: 350px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  min-width: 300px;
+  max-width: 400px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
-.coach-name {
-  margin: 0 0 8px 0;
-  font-size: 1.5em;
-  font-weight: bold;
-}
-.coach-description {
-  margin: 0;
-  color: #555;
+
+.coach-card:hover {
+  transform: translateY(-4px);
 }
 </style>
