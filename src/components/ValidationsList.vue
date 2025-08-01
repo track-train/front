@@ -332,7 +332,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useTrainingStore } from '@/stores/training'
 import DeleteConfirmationDialog from '@/components/DeleteConfirmationDialog.vue'
 import { useSnackbarStore } from '@/stores/snackbar'
@@ -462,6 +462,10 @@ watch(filteredValidations, () => {
 onMounted(() => {
   adjustSlidesPerView()
   window.addEventListener('resize', adjustSlidesPerView)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', adjustSlidesPerView)
 })
 
 const adjustSlidesPerView = () => {

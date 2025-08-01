@@ -22,15 +22,17 @@ export const useDietStore = defineStore('diet', {
     highestCaloriePlan: (state) => {
       if (!state.macroPlans.length) return null
       return state.macroPlans.reduce((max, plan) =>
-        (plan.kilocalorie || 0) > (max.kilocalorie || 0) ? plan : max,
+        (plan.kilocalorie ?? 0) > (max.kilocalorie ?? 0) ? plan : max,
       )
     },
 
     lowestCaloriePlan: (state) => {
       if (!state.macroPlans.length) return null
-      return state.macroPlans.reduce((min, plan) =>
-        (plan.kilocalorie || 0) < (min.kilocalorie || 0) ? plan : min,
-      )
+      return state.macroPlans.reduce((min, plan) => {
+        const minKcal = typeof min.kilocalorie === 'number' ? min.kilocalorie : Infinity
+        const planKcal = typeof plan.kilocalorie === 'number' ? plan.kilocalorie : Infinity
+        return planKcal < minKcal ? plan : min
+      })
     },
 
     totalMealsCount: (state) => {
