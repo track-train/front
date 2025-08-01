@@ -64,7 +64,7 @@
             <div v-if="diets.length === 0" class="empty-state text-center py-8">
               <v-icon size="64" color="grey lighten-2">mdi-food-apple</v-icon>
               <p class="text-h6 mt-4 text-grey">Aucun repas planifié</p>
-              <p class="text-body-2 text-grey">Commencez à planifier vos repas</p>
+              <p class="text-body-2 text-grey">Demander un plan diet a un coach</p>
             </div>
 
             <v-slide-group v-else show-arrows class="pa-4">
