@@ -53,17 +53,32 @@
 <script setup>
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useSnackbarStore } from '@/stores/snackbar'
 import { useRouter } from 'vue-router'
+import api from '@/plugins/axios'
 
 const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 const authStore = useAuthStore()
+const snackbarStore = useSnackbarStore()
 const router = useRouter()
 
 const handleLogin = async () => {
-  await authStore.login(email.value, password.value)
-  if (authStore.token) router.push('/dashboard')
+  await api
+    .post('/profiles', {
+      email: email.value,
+      password: password.value,
+      confirm_password: confirmPassword.value,
+    })
+    .then(() => {
+      snackbarStore.success('Compte créé avec succès ! Vous pouvez maintenant vous connecter.')
+      router.push('/login')
+    })
+    .catch((error) => {
+      console.error('Error creating account:', error)
+      snackbarStore.error(error.response?.data?.message || 'Erreur lors de la création du compte')
+    })
 }
 </script>
 

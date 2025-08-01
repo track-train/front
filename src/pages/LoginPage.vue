@@ -55,7 +55,7 @@ const router = useRouter()
 
 const handleLogin = async () => {
   await authStore.login(email.value, password.value)
-  if (authStore.token) router.push('/dashboard')
+  if (authStore.token) router.push('/')
 }
 </script>
 

@@ -1,25 +1,93 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import Login from '@/pages/LoginPage.vue'
-import Dashboard from '@/pages/DashboardPage.vue'
-import Register from '@/pages/RegisterPage.vue'
+import { useNavigationStore } from '@/stores/navigation'
+
+const routes = [
+  {
+    path: '/',
+    name: 'home',
+    component: () => import('@/pages/HomePage.vue'),
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/pages/LoginPage.vue'),
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: () => import('@/pages/RegisterPage.vue'),
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: () => import('@/pages/training/DashboardPage.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin',
+    name: 'adminPanel',
+    component: () => import('@/pages/training/AdminPanelPage.vue'),
+    meta: { requiresAuth: true, requiresRole: 'admin' },
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: () => import('@/pages/ProfilePage.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/training/:id',
+    name: 'trainingsDetails',
+    component: () => import('@/pages/training/TrainingDetails.vue'),
+    meta: { requiresAuth: true },
+    props: true,
+  },
+  {
+    path: '/diet/:id',
+    name: 'dietDetails',
+    component: () => import('@/pages/diet/DietDetails.vue'),
+    meta: { requiresAuth: true },
+    props: true,
+  },
+]
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    { path: '/', component: Login },
-    { path: '/register', component: Register },
-    { path: '/dashboard', component: Dashboard, meta: { requiresAuth: true } },
-  ],
+  history: createWebHistory(),
+  routes,
 })
 
-router.beforeEach((to, from, next) => {
-  const authStore = useAuthStore()
-  if (to.meta.requiresAuth && !authStore.token) {
-    next('/')
-  } else {
-    next()
+let fetchUserPromise = null
+
+router.beforeEach(async (to, from, next) => {
+  const auth = useAuthStore()
+  const navigation = useNavigationStore()
+
+  if (auth.token && !auth.user) {
+    if (!fetchUserPromise) {
+      fetchUserPromise = auth.fetchUser().finally(() => {
+        fetchUserPromise = null
+      })
+    }
+    await fetchUserPromise
   }
+
+  if (to.meta.requiresAuth && !auth.isAuthenticated) {
+    navigation.setError('auth_required')
+    return next('/login')
+  }
+
+  if (to.meta.requiresRole && !auth.hasRole(to.meta.requiresRole)) {
+    navigation.setError('insufficient_role', { role: to.meta.requiresRole })
+    return next('/')
+  }
+
+  next()
+})
+
+router.afterEach(() => {
+  const navigation = useNavigationStore()
+  navigation.showPendingError()
 })
 
 export default router
