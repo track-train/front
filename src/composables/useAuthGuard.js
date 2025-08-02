@@ -1,39 +1,106 @@
+import { createRouter, createWebHistory } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { useRouter } from 'vue-router'
-import { useSnackbarStore } from '@/stores/snackbar'
+import { useAuthGuard } from '@/guards/authGuard'
+import { useNavigationStore } from '@/stores/navigation'
 
-export function useAuthGuard() {
+const routes = [
+  {
+    path: '/',
+    name: 'home',
+    component: () => import('@/pages/HomePage.vue'),
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('@/pages/LoginPage.vue'),
+  },
+  {
+    path: '/register',
+    name: 'register',
+    component: () => import('@/pages/RegisterPage.vue'),
+  },
+  {
+    path: '/dashboard',
+    name: 'dashboard',
+    component: () => import('@/pages/training/DashboardPage.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/admin',
+    name: 'adminPanel',
+    component: () => import('@/pages/training/AdminPanelPage.vue'),
+    meta: { requiresAuth: true, requiresRole: 'admin', },
+  },
+  {
+    path: '/profile',
+    name: 'profile',
+    component: () => import('@/pages/ProfilePage.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/training/:id',
+    name: 'trainingsDetails',
+    component: () => import('@/pages/training/TrainingDetails.vue'),
+    meta: { requiresAuth: true },
+    props: true,
+  },
+  {
+    path: '/diet/:id',
+    name: 'dietDetails',
+    component: () => import('@/pages/diet/DietDetails.vue'),
+    meta: { requiresAuth: true },
+    props: true,
+  },
+  {
+    path: '/groups/owner/:ownerId',
+    name: 'GroupsCoach',
+    component: () => import('@/pages/groups/GroupsCoachPage.vue'),
+    meta: { requiresAuth: true, requiresRole: ['coach', 'admin'] }
+  },
+  {
+    path: '/groups/:groupId/membres',
+    name: 'GroupsMember',
+    component: () => import('@/pages/groups/GroupMemberPage.vue'),
+    meta: { requiresAuth: true, requiresRole: ['coach', 'admin'] },
+    props: true,  
+  }
+]
+
+const router = createRouter({
+  history: createWebHistory(),
+  routes,
+})
+
+let fetchUserPromise = null
+
+router.beforeEach(async (to, from, next) => {
   const auth = useAuthStore()
-  const router = useRouter()
-  const snackbar = useSnackbarStore()
+  const navigation = useNavigationStore()
+  const { requireAuth, requireRole } = useAuthGuard()
 
-  const requireAuth = () => {
-    if (!auth.isAuthenticated) {
-      snackbar.error('Vous devez être connecté pour accéder à cette page.')
-      router.push('/login')
-      return false
+  // Ensure user loaded from token if present
+  if (auth.token && !auth.user) {
+    if (!fetchUserPromise) {
+      fetchUserPromise = auth.fetchUser().finally(() => {
+        fetchUserPromise = null
+      })
     }
-    return true
+    await fetchUserPromise
   }
 
-  const requireRole = (role) => {
-    if (!requireAuth()) return false
-
-    if (!auth.hasRole(role)) {
-      snackbar.error(`Accès refusé. Vous devez avoir le rôle ${role}.`)
-      router.push('/')
-      return false
+  if (to.meta.requiresAuth) {
+    if (!requireAuth()) return // snackbar + redirection handled in guard
+    if (to.meta.requiresRole) {
+      if (!requireRole(to.meta.requiresRole)) return // snackbar + redirection handled in guard
     }
-    return true
   }
 
-  const requireAdmin = () => {
-    return requireRole('admin')
-  }
+  next()
+})
 
-  return {
-    requireAuth,
-    requireRole,
-    requireAdmin,
-  }
-}
+router.afterEach(() => {
+  const navigation = useNavigationStore()
+  navigation.showPendingError()
+})
+
+export default router
