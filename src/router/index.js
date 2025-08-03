@@ -62,6 +62,14 @@ const routes = [
     component: () => import('@/pages/groups/GroupMemberPage.vue'),
     meta: { requiresAuth: true, requiresRole: ['coach', 'admin'] },
     props: true,  
+  },
+  {
+    path: '/profiles/:uuid',
+    name: 'UserProfilePage',
+    component: () => import('@/pages/profiles/UserProfilePage.vue'),
+    meta: { requiresAuth: true, requiresRole: ['coach', 'admin'] },
+
+    props: true
   }
 ]
 
