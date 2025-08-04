@@ -28,7 +28,7 @@ const routes = [
     path: '/admin',
     name: 'adminPanel',
     component: () => import('@/pages/training/AdminPanelPage.vue'),
-    meta: { requiresAuth: true, requiresRole: 'admin', },
+    meta: { requiresAuth: true, requiresRole: 'admin' },
   },
   {
     path: '/profile',
@@ -54,23 +54,22 @@ const routes = [
     path: '/groups/owner/:ownerId',
     name: 'GroupsCoach',
     component: () => import('@/pages/groups/GroupsCoachPage.vue'),
-    meta: { requiresAuth: true, requiresRole: ['coach', 'admin'] }
+    meta: { requiresAuth: true, requiresRole: ['coach', 'admin'] },
   },
   {
     path: '/groups/:groupId/membres',
     name: 'GroupsMember',
     component: () => import('@/pages/groups/GroupMemberPage.vue'),
     meta: { requiresAuth: true, requiresRole: ['coach', 'admin'] },
-    props: true,  
+    props: true,
   },
   {
     path: '/profiles/:uuid',
     name: 'UserProfilePage',
     component: () => import('@/pages/profiles/UserProfilePage.vue'),
     meta: { requiresAuth: true, requiresRole: ['coach', 'admin'] },
-
-    props: true
-  }
+    props: true,
+  },
 ]
 
 const router = createRouter({

@@ -15,7 +15,6 @@
       </v-tab>
     </v-tabs>
     <v-window v-model="activeTab">
-      <!-- Tab 1 : Membres suivis -->
       <v-window-item value="members">
         <v-text-field
           v-model="filter"
@@ -25,19 +24,28 @@
           clearable
         />
         <v-alert v-if="errorMembers" type="error" class="mb-4">{{ errorMembers }}</v-alert>
-        <v-list v-infinite-scroll="loadMoreMembers" :infinite-scroll-disabled="allLoadedMembers" class="member-list">
-          <v-list-item
-            v-for="user in filteredGroupMembers"
-            :key="user.id"
-            class="member-list-item"
-          >
+        <v-list
+          v-infinite-scroll="loadMoreMembers"
+          :infinite-scroll-disabled="allLoadedMembers"
+          class="member-list"
+        >
+          <v-list-item v-for="user in filteredGroupMembers" :key="user.id" class="member-list-item">
             <v-list-item-content>
               <v-list-item-title>{{ user.name }}</v-list-item-title>
             </v-list-item-content>
-            <v-list-item-action>
+            <v-list-item-action class="d-flex gap-2">
               <v-btn color="primary" size="small" @click="viewProfile(user.id)">
                 Voir profil
                 <v-icon right size="small">mdi-account-arrow-right</v-icon>
+              </v-btn>
+              <v-btn
+                color="error"
+                size="small"
+                :loading="loadingRemoveUser[user.id]"
+                @click="openRemoveUserDialog(user)"
+              >
+                <v-icon left size="small">mdi-minus</v-icon>
+                Retirer
               </v-btn>
             </v-list-item-action>
           </v-list-item>
@@ -50,7 +58,6 @@
         </v-list>
       </v-window-item>
 
-      <!-- Tab 2 : Tous les utilisateurs -->
       <v-window-item value="users">
         <v-text-field
           v-model="filterUsers"
@@ -60,12 +67,12 @@
           clearable
         />
         <v-alert v-if="errorUsers" type="error" class="mb-4">{{ errorUsers }}</v-alert>
-        <v-list v-infinite-scroll="loadMoreUsers" :infinite-scroll-disabled="allLoadedUsers" class="member-list">
-          <v-list-item
-            v-for="user in filteredAllUsers"
-            :key="user.id"
-            class="member-list-item"
-          >
+        <v-list
+          v-infinite-scroll="loadMoreUsers"
+          :infinite-scroll-disabled="allLoadedUsers"
+          class="member-list"
+        >
+          <v-list-item v-for="user in filteredAllUsers" :key="user.id" class="member-list-item">
             <v-list-item-content>
               <v-list-item-title>{{ user.name }}</v-list-item-title>
               <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
@@ -75,6 +82,7 @@
                 color="success"
                 size="small"
                 :disabled="isUserInGroup(user.id) || loadingAddUser[user.id]"
+                :loading="loadingAddUser[user.id]"
                 @click="addUserToGroup(user.id)"
               >
                 <v-icon left size="small">mdi-plus</v-icon>
@@ -91,6 +99,32 @@
         </v-list>
       </v-window-item>
     </v-window>
+
+    <!-- Modal de confirmation pour retirer un utilisateur -->
+    <v-dialog v-model="removeUserDialog" max-width="400">
+      <v-card>
+        <v-card-title class="text-h6">
+          <v-icon class="mr-2" color="error">mdi-account-minus</v-icon>
+          Retirer du groupe
+        </v-card-title>
+        <v-card-text>
+          Êtes-vous sûr de vouloir retirer <strong>{{ selectedUserToRemove?.name }}</strong> du
+          groupe ? <br /><br />
+          Cette action est irréversible.
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn text @click="removeUserDialog = false">Annuler</v-btn>
+          <v-btn
+            color="error"
+            :loading="loadingRemoveUser[selectedUserToRemove?.id]"
+            @click="confirmRemoveUser"
+          >
+            Retirer
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -105,34 +139,35 @@ const router = useRouter()
 const snackbarStore = useSnackbarStore()
 const groupId = route.params.groupId
 
-// MEMBERS TAB ---------------------------------
 const groupMembers = ref([])
-const filter = ref("")
+const filter = ref('')
 const errorMembers = ref(null)
 const loadingMembers = ref(false)
 const pageMembers = ref(1)
 const perPage = 20
 const allLoadedMembers = ref(false)
 
-// USERS TAB -----------------------------------
 const allUsers = ref([])
-const filterUsers = ref("")
+const filterUsers = ref('')
 const errorUsers = ref(null)
 const loadingUsers = ref(false)
 const pageUsers = ref(1)
 const allLoadedUsers = ref(false)
 const loadingAddUser = ref({})
 
-// Tabs
-const activeTab = ref("members")
+// Variables pour la suppression
+const loadingRemoveUser = ref({})
+const removeUserDialog = ref(false)
+const selectedUserToRemove = ref(null)
 
-// Chargement membres du groupe (infinite)
+const activeTab = ref('members')
+
 async function fetchMembers(pageNum) {
   loadingMembers.value = true
   errorMembers.value = null
   try {
     const resp = await api.get(`/groups/${groupId}/members`, {
-      params: { page: pageNum, perPage }
+      params: { page: pageNum, perPage },
     })
     if (Array.isArray(resp.data) && resp.data.length) {
       groupMembers.value.push(...resp.data)
@@ -141,30 +176,31 @@ async function fetchMembers(pageNum) {
       allLoadedMembers.value = true
     }
   } catch (e) {
-    errorMembers.value = "Erreur lors du chargement des membres."
+    errorMembers.value = 'Erreur lors du chargement des membres.'
   } finally {
     loadingMembers.value = false
   }
 }
+
 function loadMoreMembers() {
   if (!allLoadedMembers.value && !loadingMembers.value) {
     pageMembers.value++
     fetchMembers(pageMembers.value)
   }
 }
+
 const filteredGroupMembers = computed(() => {
   const f = filter.value.trim().toLowerCase()
   if (!f) return groupMembers.value
-  return groupMembers.value.filter(u => u.name?.toLowerCase().includes(f))
+  return groupMembers.value.filter((u) => u.name?.toLowerCase().includes(f))
 })
 
-// Chargement utilisateurs globaux (infinite)
 async function fetchAllUsers(pageNum) {
   loadingUsers.value = true
   errorUsers.value = null
   try {
     const resp = await api.get(`/profiles/users`, {
-      params: { page: pageNum, perPage }
+      params: { page: pageNum, perPage },
     })
     if (Array.isArray(resp.data) && resp.data.length) {
       allUsers.value.push(...resp.data)
@@ -173,44 +209,84 @@ async function fetchAllUsers(pageNum) {
       allLoadedUsers.value = true
     }
   } catch (e) {
-    errorUsers.value = "Erreur lors du chargement des utilisateurs."
+    errorUsers.value = 'Erreur lors du chargement des utilisateurs.'
   } finally {
     loadingUsers.value = false
   }
 }
+
 function loadMoreUsers() {
   if (!allLoadedUsers.value && !loadingUsers.value) {
     pageUsers.value++
     fetchAllUsers(pageUsers.value)
   }
 }
+
 const filteredAllUsers = computed(() => {
   const f = filterUsers.value.trim().toLowerCase()
   if (!f) return allUsers.value
-  return allUsers.value.filter(u =>
-    u.name?.toLowerCase().includes(f) ||
-    u.email?.toLowerCase().includes(f)
+  return allUsers.value.filter(
+    (u) => u.name?.toLowerCase().includes(f) || u.email?.toLowerCase().includes(f),
   )
 })
 
-// Ajouter un utilisateur au groupe
 function isUserInGroup(id) {
-  return groupMembers.value.some(u => u.id === id)
+  return groupMembers.value.some((u) => u.id === id)
 }
+
+const allUsersById = computed(() => {
+  const map = new Map()
+  allUsers.value.forEach((u) => map.set(u.id, u))
+  return map
+})
+
 async function addUserToGroup(userId) {
   loadingAddUser.value[userId] = true
   try {
     await api.post(`/groups/${groupId}/members/${userId}`)
-    // Ajoute l'utilisateur à la liste des membres suivis (UI immédiate)
-    const user = allUsers.value.find(u => u.id === userId)
-    if (user && !isUserInGroup(userId)) groupMembers.value.push(user)
-    snackbarStore.success("Utilisateur ajouté au groupe !")
+    const user = allUsersById.value.get(userId)
+    if (user && !isUserInGroup(userId)) {
+      groupMembers.value.push(user)
+    }
+    snackbarStore.success('Utilisateur ajouté au groupe !')
   } catch (e) {
+    console.error("Erreur lors de l'ajout:", e)
     snackbarStore.error("Erreur lors de l'ajout de l'utilisateur.")
   } finally {
     loadingAddUser.value[userId] = false
   }
 }
+
+function openRemoveUserDialog(user) {
+  selectedUserToRemove.value = user
+  removeUserDialog.value = true
+}
+
+async function confirmRemoveUser() {
+  if (!selectedUserToRemove.value) return
+
+  const userId = selectedUserToRemove.value.id
+  loadingRemoveUser.value[userId] = true
+
+  try {
+    await api.delete(`/groups/${groupId}/members/${userId}`)
+
+    // Retirer l'utilisateur de la liste des membres
+    groupMembers.value = groupMembers.value.filter((member) => member.id !== userId)
+
+    snackbarStore.success(`${selectedUserToRemove.value.name} a été retiré du groupe !`)
+
+    // Fermer la modal et réinitialiser
+    removeUserDialog.value = false
+    selectedUserToRemove.value = null
+  } catch (error) {
+    console.error('Erreur lors de la suppression:', error)
+    snackbarStore.error("Erreur lors de la suppression de l'utilisateur du groupe.")
+  } finally {
+    loadingRemoveUser.value[userId] = false
+  }
+}
+
 function viewProfile(userId) {
   router.push(`/profiles/${userId}`)
 }
@@ -231,8 +307,13 @@ onMounted(() => {
 .member-list-item {
   border-bottom: 1px solid #eee;
 }
+
 .member-list {
   max-height: 600px;
   overflow-y: auto;
+}
+
+.d-flex.gap-2 {
+  gap: 8px;
 }
 </style>
