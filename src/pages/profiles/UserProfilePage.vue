@@ -1,4 +1,3 @@
-<!-- pages/profiles/UserProfilePage.vue -->
 <template>
   <div class="profile-page">
     <v-container>
@@ -10,7 +9,7 @@
                 <v-icon size="36">mdi-account</v-icon>
               </v-avatar>
               <div>
-                <h2 class="mb-0">{{ user?.name || "Profil utilisateur" }}</h2>
+                <h2 class="mb-0">{{ user?.name || 'Profil utilisateur' }}</h2>
                 <div class="text-caption text-grey">
                   <span v-if="user?.email">{{ user.email }}</span>
                   <span v-if="user?.age"> — {{ user.age }} ans</span>
@@ -34,13 +33,13 @@
                 </v-chip>
               </div>
               <div>
-                <span class="font-weight-bold">Contact:</span>
+                <span class="font-weight-bold">Contact: </span>
                 <span v-if="user?.contact">{{ user.contact }}</span>
                 <span v-else class="text-grey">Non renseigné</span>
               </div>
               <div>
-                <span class="font-weight-bold">Tarif:</span>
-                <span v-if="user?.pricing">{{ user.pricing }} €</span>
+                <span class="font-weight-bold">Sex: </span>
+                <span v-if="user?.sex">{{ user.sex }}</span>
                 <span v-else class="text-grey">Non renseigné</span>
               </div>
             </v-card-text>
@@ -50,17 +49,14 @@
 
       <v-row>
         <v-col cols="12" md="6">
-          <TrainingList
-            :trainings="trainings"
-            @trainingClick="goToTraining"
-          >
+          <TrainingList :trainings="trainings" @trainingClick="goToTraining">
             <template #action v-if="canCreateForUser">
               <v-btn
                 color="primary"
                 @click="showCreateTraining = true"
                 class="ml-2"
                 elevation="1"
-                style="min-width: 0; width: 40px; height: 40px;"
+                style="min-width: 0; width: 40px; height: 40px"
                 icon
               >
                 <v-icon>mdi-plus</v-icon>
@@ -69,17 +65,14 @@
           </TrainingList>
         </v-col>
         <v-col cols="12" md="6">
-          <DietList
-            :diets="diets"
-            @dietClick="goToDiet"
-          >
+          <DietList :diets="diets" @dietClick="goToDiet">
             <template #action v-if="canCreateForUser">
               <v-btn
                 color="success"
                 @click="showCreateDiet = true"
                 class="ml-2"
                 elevation="1"
-                style="min-width: 0; width: 40px; height: 40px;"
+                style="min-width: 0; width: 40px; height: 40px"
                 icon
               >
                 <v-icon>mdi-plus</v-icon>
@@ -90,16 +83,8 @@
       </v-row>
     </v-container>
 
-    <!-- Modale création Training -->
-    <TrainingCreateDialog
-      v-model="showCreateTraining"
-      @created="createTraining"
-    />
-    <!-- Modale création Diet -->
-    <DietCreateDialog
-      v-model="showCreateDiet"
-      @created="createDiet"
-    />
+    <TrainingCreateDialog v-model="showCreateTraining" @created="createTraining" />
+    <DietCreateDialog v-model="showCreateDiet" @created="createDiet" />
   </div>
 </template>
 
@@ -136,6 +121,8 @@ async function fetchUserProfile() {
     const resp = await api.get(`/profiles/${userId.value}`)
     user.value = resp.data
   } catch (e) {
+    console.error('Error fetching user profile:', e)
+    snackbarStore.error('Erreur lors du chargement du profil utilisateur.')
     user.value = null
   } finally {
     loading.value = false
@@ -174,52 +161,53 @@ onUnmounted(() => {
   contextual.clearUserProfileId()
 })
 
-watch(() => route.params.uuid, (newUuid) => {
-  userId.value = newUuid
-  contextual.setUserProfileId(userId.value)
-  fetchUserProfile()
-  fetchUserTrainings()
-  fetchUserDiets()
-})
-
-// Affiche le bouton + uniquement si le user connecté est coach ET n'est pas en train de voir son propre profil
-const canCreateForUser = computed(() =>
-  auth.userRoles?.includes('coach') && auth.userId !== userId.value
+watch(
+  () => route.params.uuid,
+  (newUuid) => {
+    userId.value = newUuid
+    contextual.setUserProfileId(userId.value)
+    fetchUserProfile()
+    fetchUserTrainings()
+    fetchUserDiets()
+  },
 )
 
-// Routing : ajoute bien le contexte userProfileId grâce au store contextual (qui sera lu dans TrainingCard/DietCard)
+const canCreateForUser = computed(
+  () => auth.userRoles?.includes('coach') && auth.userId !== userId.value,
+)
+
 const goToTraining = (trainingId) => {
   router.push({
     path: `/training/${trainingId}`,
-    query: { userId: userId.value }
+    query: { userId: userId.value },
   })
 }
 const goToDiet = (dietId) => {
   router.push({
     path: `/diet/${dietId}`,
-    query: { userId: userId.value }
+    query: { userId: userId.value },
   })
 }
 
-// Création training
 async function createTraining({ name, description }) {
   try {
     await api.post(`/trainings/${userId.value}`, { name, description })
     await fetchUserTrainings()
     snackbarStore.success('Training créé avec succès !')
   } catch (e) {
-    snackbarStore.error("Erreur lors de la création du training.")
+    console.error(e)
+    snackbarStore.error('Erreur lors de la création du training.')
   }
 }
 
-// Création diet
 async function createDiet({ name, description }) {
   try {
     await api.post(`/diets/${userId.value}`, { name, description })
     await fetchUserDiets()
     snackbarStore.success('Diet créée avec succès !')
   } catch (e) {
-    snackbarStore.error("Erreur lors de la création du diet.")
+    console.error(e)
+    snackbarStore.error('Erreur lors de la création du diet.')
   }
 }
 </script>
