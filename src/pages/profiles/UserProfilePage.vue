@@ -100,18 +100,15 @@
       v-model="showCreateDiet"
       @created="createDiet"
     />
-
-    <!-- Snackbar -->
-    <v-snackbar v-model="snackbar.show" :color="snackbar.color" :timeout="4000">
-      {{ snackbar.text }}
-    </v-snackbar>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useContextualStore } from '@/stores/contextual'
+import { useSnackbarStore } from '@/stores/snackbar'
 import api from '@/plugins/axios'
 import TrainingList from '@/components/TrainingList.vue'
 import DietList from '@/components/DietList.vue'
@@ -121,6 +118,8 @@ import DietCreateDialog from '@/components/DietCreateDialog.vue'
 const route = useRoute()
 const router = useRouter()
 const auth = useAuthStore()
+const contextual = useContextualStore()
+const snackbarStore = useSnackbarStore()
 
 const userId = ref(route.params.uuid)
 const user = ref(null)
@@ -130,18 +129,6 @@ const loading = ref(false)
 
 const showCreateTraining = ref(false)
 const showCreateDiet = ref(false)
-
-const snackbar = ref({
-  show: false,
-  text: '',
-  color: 'success'
-})
-
-function showSnackbar(text, color = 'success') {
-  snackbar.value.text = text
-  snackbar.value.color = color
-  snackbar.value.show = true
-}
 
 async function fetchUserProfile() {
   loading.value = true
@@ -176,14 +163,20 @@ async function fetchUserDiets() {
 onMounted(() => {
   if (route.params.uuid) {
     userId.value = route.params.uuid
+    contextual.setUserProfileId(userId.value)
     fetchUserProfile()
     fetchUserTrainings()
     fetchUserDiets()
   }
 })
 
+onUnmounted(() => {
+  contextual.clearUserProfileId()
+})
+
 watch(() => route.params.uuid, (newUuid) => {
   userId.value = newUuid
+  contextual.setUserProfileId(userId.value)
   fetchUserProfile()
   fetchUserTrainings()
   fetchUserDiets()
@@ -194,11 +187,18 @@ const canCreateForUser = computed(() =>
   auth.userRoles?.includes('coach') && auth.userId !== userId.value
 )
 
+// Routing : ajoute bien le contexte userProfileId grâce au store contextual (qui sera lu dans TrainingCard/DietCard)
 const goToTraining = (trainingId) => {
-  router.push(`/training/${trainingId}`)
+  router.push({
+    path: `/training/${trainingId}`,
+    query: { userId: userId.value }
+  })
 }
 const goToDiet = (dietId) => {
-  router.push(`/diet/${dietId}`)
+  router.push({
+    path: `/diet/${dietId}`,
+    query: { userId: userId.value }
+  })
 }
 
 // Création training
@@ -206,9 +206,9 @@ async function createTraining({ name, description }) {
   try {
     await api.post(`/trainings/${userId.value}`, { name, description })
     await fetchUserTrainings()
-    showSnackbar('Training créé avec succès !', 'success')
+    snackbarStore.success('Training créé avec succès !')
   } catch (e) {
-    showSnackbar("Erreur lors de la création du training.", 'error')
+    snackbarStore.error("Erreur lors de la création du training.")
   }
 }
 
@@ -217,9 +217,9 @@ async function createDiet({ name, description }) {
   try {
     await api.post(`/diets/${userId.value}`, { name, description })
     await fetchUserDiets()
-    showSnackbar('Diet créée avec succès !', 'success')
+    snackbarStore.success('Diet créée avec succès !')
   } catch (e) {
-    showSnackbar("Erreur lors de la création du diet.", 'error')
+    snackbarStore.error("Erreur lors de la création du diet.")
   }
 }
 </script>

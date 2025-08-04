@@ -39,14 +39,14 @@ const routes = [
   {
     path: '/training/:id',
     name: 'trainingsDetails',
-    component: () => import('@/pages/training/TrainingDetails.vue'),
+    component: () => import('@/pages/training/TrainingDetailsPage.vue'),
     meta: { requiresAuth: true },
     props: true,
   },
   {
     path: '/diet/:id',
     name: 'dietDetails',
-    component: () => import('@/pages/diet/DietDetails.vue'),
+    component: () => import('@/pages/diet/DietDetailsPage.vue'),
     meta: { requiresAuth: true },
     props: true,
   },
