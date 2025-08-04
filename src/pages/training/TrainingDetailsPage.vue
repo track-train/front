@@ -84,7 +84,6 @@
         </template>
 
         <template v-slot:item.actions="{ item }">
-          <!-- Bouton Valider pour les utilisateurs normaux -->
           <v-btn
             v-if="!canCreateTask"
             color="primary"
@@ -95,8 +94,7 @@
             <v-icon small class="mr-1">mdi-plus</v-icon>
             Valider
           </v-btn>
-          
-          <!-- Bouton Supprimer pour les coaches/admins -->
+
           <v-btn
             v-if="canCreateTask"
             color="error"
@@ -134,20 +132,10 @@
       @validation-created="onValidationCreated"
     />
 
-    <!-- Floating Action Button pour coach/admin + profil ciblé différent -->
-    <FloatingActionButton
-      v-if="canCreateTask"
-      icon="mdi-plus"
-      @click="showCreateTask = true"
-    />
+    <FloatingActionButton v-if="canCreateTask" icon="mdi-plus" @click="showCreateTask = true" />
 
-    <!-- Modal création task -->
-    <TaskCreateDialog
-      v-model="showCreateTask"
-      @created="createTask"
-    />
+    <TaskCreateDialog v-model="showCreateTask" @created="createTask" />
 
-    <!-- Modal confirmation suppression -->
     <DeleteConfirmationDialog
       v-model="deleteTaskDialog"
       :title="`Supprimer l'exercice`"
@@ -183,7 +171,6 @@ const selectedTask = ref(null)
 const expandedTasks = ref([])
 const showCreateTask = ref(false)
 
-// Variables pour la suppression
 const deleteTaskDialog = ref(false)
 const selectedTaskToDelete = ref(null)
 const deletingTaskId = ref(null)
@@ -191,11 +178,11 @@ const deletingTaskId = ref(null)
 const trainingId = computed(() => route.params.id)
 const targetUserId = computed(() => contextual.userProfileId || route.query.userId)
 
-// Condition stricte: coach/admin ET profil ciblé différent du connecté
-const canCreateTask = computed(() =>
-  ['coach', 'admin'].some(role => authStore.userRoles?.includes(role)) &&
-  targetUserId.value &&
-  targetUserId.value !== authStore.userId
+const canCreateTask = computed(
+  () =>
+    ['coach', 'admin'].some((role) => authStore.userRoles?.includes(role)) &&
+    targetUserId.value &&
+    targetUserId.value !== authStore.userId,
 )
 
 const headers = [
@@ -231,23 +218,22 @@ const openDeleteTaskDialog = (task) => {
 
 const confirmDeleteTask = async () => {
   if (!selectedTaskToDelete.value) return
-  
+
   deletingTaskId.value = selectedTaskToDelete.value.id
-  
+
   try {
     await api.delete(
-      `/trainings/${trainingId.value}/user/${targetUserId.value}/tasks/${selectedTaskToDelete.value.id}`
+      `/trainings/${trainingId.value}/user/${targetUserId.value}/tasks/${selectedTaskToDelete.value.id}`,
     )
-    
-    // Recharger les tâches après suppression
+
     await trainingStore.fetchTasks(trainingId.value)
-    
-    snackbarStore.success(`Exercice '${selectedTaskToDelete.value.exercise_name}' supprimé avec succès !`)
-    
-    // Fermer la modal et réinitialiser
+
+    snackbarStore.success(
+      `Exercice '${selectedTaskToDelete.value.exercise_name}' supprimé avec succès !`,
+    )
+
     deleteTaskDialog.value = false
     selectedTaskToDelete.value = null
-    
   } catch (error) {
     console.error('Erreur lors de la suppression de la tâche:', error)
     snackbarStore.error("Erreur lors de la suppression de l'exercice.")
@@ -273,18 +259,13 @@ const onValidationCreated = () => {
   selectedTask.value = null
 }
 
-// Création de la tâche (exercice)
 async function createTask(payload) {
   try {
-    const response = await api.post(
-      `/trainings/${trainingId.value}/user/${targetUserId.value}/tasks`,
-      payload
-    )
-    console.log('API response:', response)
-    
+    await api.post(`/trainings/${trainingId.value}/user/${targetUserId.value}/tasks`, payload)
+
     await trainingStore.fetchTasks(trainingId.value)
     snackbarStore.success('Exercice ajouté avec succès !')
-    showCreateTask.value = false // Fermer la modal après succès
+    showCreateTask.value = false
   } catch (e) {
     console.error('Error creating task:', e)
     snackbarStore.error("Erreur lors de la création de l'exercice.")
