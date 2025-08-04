@@ -123,6 +123,10 @@
         </v-window-item>
       </v-window>
     </div>
+
+    <FloatingActionButton v-if="canCreatePlan" icon="mdi-plus" @click="showCreatePlan = true" />
+
+    <DietPlanCreateDialog v-model="showCreatePlan" @created="createPlan" />
   </v-container>
 </template>
 
@@ -131,20 +135,70 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useDietStore } from '@/stores/diet'
 import { useAuthStore } from '@/stores/auth'
+import { useContextualStore } from '@/stores/contextual'
+import { useSnackbarStore } from '@/stores/snackbar'
+import api from '@/plugins/axios'
 import MacroPlanCard from '@/components/MacroPlanCard.vue'
 import MealPlanCard from '@/components/MealPlanCard.vue'
+import FloatingActionButton from '@/components/FloatingActionButton.vue'
+import DietPlanCreateDialog from '@/components/DietPlanCreateDialog.vue'
 
 const route = useRoute()
 const router = useRouter()
 const dietStore = useDietStore()
 const authStore = useAuthStore()
+const contextual = useContextualStore()
+const snackbarStore = useSnackbarStore()
 
 const activeTab = ref('macro')
+const showCreatePlan = ref(false)
 
 const dietId = computed(() => route.params.id)
+const targetUserId = computed(() => contextual.userProfileId || route.query.userId)
+
+const canCreatePlan = computed(
+  () =>
+    ['coach', 'admin'].some((role) => authStore.userRoles?.includes(role)) &&
+    targetUserId.value &&
+    targetUserId.value !== authStore.userId,
+)
+
+const isLoading = computed(() => {
+  return dietStore.loading.macroPlans || dietStore.loading.mealPlans
+})
 
 const goBack = () => {
   router.push('/')
+}
+
+const createPlan = async (payload) => {
+  try {
+    let endpoint
+    let data
+
+    if (payload.type === 'macro') {
+      endpoint = `/diets/${dietId.value}/user/${targetUserId.value}/macro_plans`
+      data = payload.data
+    } else {
+      endpoint = `/diets/${dietId.value}/user/${targetUserId.value}/meal_plans`
+      data = payload.data
+    }
+
+    await api.post(endpoint, data)
+
+    if (payload.type === 'macro') {
+      await dietStore.fetchMacroPlans(dietId.value)
+      snackbarStore.success('Plan macro créé avec succès !')
+    } else {
+      await dietStore.fetchMealPlans(dietId.value)
+      snackbarStore.success('Plan repas créé avec succès !')
+    }
+
+    showCreatePlan.value = false
+  } catch (error) {
+    console.error('Erreur lors de la création du plan:', error)
+    snackbarStore.error('Erreur lors de la création du plan.')
+  }
 }
 
 onMounted(async () => {

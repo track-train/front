@@ -39,15 +39,35 @@ const routes = [
   {
     path: '/training/:id',
     name: 'trainingsDetails',
-    component: () => import('@/pages/training/TrainingDetails.vue'),
+    component: () => import('@/pages/training/TrainingDetailsPage.vue'),
     meta: { requiresAuth: true },
     props: true,
   },
   {
     path: '/diet/:id',
     name: 'dietDetails',
-    component: () => import('@/pages/diet/DietDetails.vue'),
+    component: () => import('@/pages/diet/DietDetailsPage.vue'),
     meta: { requiresAuth: true },
+    props: true,
+  },
+  {
+    path: '/groups/owner/:ownerId',
+    name: 'GroupsCoach',
+    component: () => import('@/pages/groups/GroupsCoachPage.vue'),
+    meta: { requiresAuth: true, requiresRole: ['coach', 'admin'] },
+  },
+  {
+    path: '/groups/:groupId/membres',
+    name: 'GroupsMember',
+    component: () => import('@/pages/groups/GroupMemberPage.vue'),
+    meta: { requiresAuth: true, requiresRole: ['coach', 'admin'] },
+    props: true,
+  },
+  {
+    path: '/profiles/:uuid',
+    name: 'UserProfilePage',
+    component: () => import('@/pages/profiles/UserProfilePage.vue'),
+    meta: { requiresAuth: true, requiresRole: ['coach', 'admin'] },
     props: true,
   },
 ]

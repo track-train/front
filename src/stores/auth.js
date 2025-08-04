@@ -12,7 +12,13 @@ export const useAuthStore = defineStore('auth', {
 
   getters: {
     isAuthenticated: (state) => !!state.token && !!state.user,
-    hasRole: (state) => (role) => state.user?.roles?.includes(role) || false,
+    hasRole: (state) => (role) => {
+      if (!state.user?.roles) return false
+      if (Array.isArray(role)) {
+        return state.user.roles.some(r => role.includes(r))
+      }
+      return state.user.roles.includes(role)
+    },
     isAdmin: (state) => state.user?.roles?.includes('admin') || false,
     isCoach: (state) => state.user?.roles?.includes('coach') || false,
     userRoles: (state) => state.user?.roles || [],

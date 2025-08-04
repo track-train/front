@@ -84,6 +84,7 @@
 
         <template v-slot:item.actions="{ item }">
           <v-btn
+            v-if="!canCreateTask"
             color="primary"
             size="small"
             @click="openValidationDialog(item)"
@@ -91,6 +92,17 @@
           >
             <v-icon small class="mr-1">mdi-plus</v-icon>
             Valider
+          </v-btn>
+
+          <v-btn
+            v-if="canCreateTask"
+            color="error"
+            size="small"
+            @click="openDeleteTaskDialog(item)"
+            :loading="deletingTaskId === item.id"
+          >
+            <v-icon small class="mr-1">mdi-delete</v-icon>
+            Supprimer
           </v-btn>
         </template>
 
@@ -118,6 +130,17 @@
       :training-id="trainingId"
       @validation-created="onValidationCreated"
     />
+
+    <FloatingActionButton v-if="canCreateTask" icon="mdi-plus" @click="showCreateTask = true" />
+
+    <TaskCreateDialog v-model="showCreateTask" @created="createTask" />
+
+    <DeleteConfirmationDialog
+      v-model="deleteTaskDialog"
+      :title="`Supprimer l'exercice`"
+      :message="`Êtes-vous sûr de vouloir supprimer l'exercice '${selectedTaskToDelete?.exercise_name}' ? Cette action est irréversible.`"
+      @confirm="confirmDeleteTask"
+    />
   </v-container>
 </template>
 
@@ -125,18 +148,41 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useTrainingStore } from '@/stores/training'
+import { useAuthStore } from '@/stores/auth'
+import { useContextualStore } from '@/stores/contextual'
+import { useSnackbarStore } from '@/stores/snackbar'
+import api from '@/plugins/axios'
+import FloatingActionButton from '@/components/FloatingActionButton.vue'
+import TaskCreateDialog from '@/components/TaskCreateDialog.vue'
 import ValidationDialog from '@/components/ValidationDialog.vue'
 import ValidationsList from '@/components/ValidationsList.vue'
+import DeleteConfirmationDialog from '@/components/DeleteConfirmationDialog.vue'
 
 const route = useRoute()
 const router = useRouter()
 const trainingStore = useTrainingStore()
+const authStore = useAuthStore()
+const contextual = useContextualStore()
+const snackbarStore = useSnackbarStore()
 
 const validationDialog = ref(false)
 const selectedTask = ref(null)
 const expandedTasks = ref([])
+const showCreateTask = ref(false)
+
+const deleteTaskDialog = ref(false)
+const selectedTaskToDelete = ref(null)
+const deletingTaskId = ref(null)
 
 const trainingId = computed(() => route.params.id)
+const targetUserId = computed(() => contextual.userProfileId || route.query.userId)
+
+const canCreateTask = computed(
+  () =>
+    ['coach', 'admin'].some((role) => authStore.userRoles?.includes(role)) &&
+    targetUserId.value &&
+    targetUserId.value !== authStore.userId,
+)
 
 const headers = [
   { title: 'Exercice', key: 'exercise_name', sortable: true },
@@ -164,6 +210,37 @@ const openValidationDialog = (task) => {
   validationDialog.value = true
 }
 
+const openDeleteTaskDialog = (task) => {
+  selectedTaskToDelete.value = task
+  deleteTaskDialog.value = true
+}
+
+const confirmDeleteTask = async () => {
+  if (!selectedTaskToDelete.value) return
+
+  deletingTaskId.value = selectedTaskToDelete.value.id
+
+  try {
+    await api.delete(
+      `/trainings/${trainingId.value}/user/${targetUserId.value}/tasks/${selectedTaskToDelete.value.id}`,
+    )
+
+    await trainingStore.fetchTasks(trainingId.value)
+
+    snackbarStore.success(
+      `Exercice '${selectedTaskToDelete.value.exercise_name}' supprimé avec succès !`,
+    )
+
+    deleteTaskDialog.value = false
+    selectedTaskToDelete.value = null
+  } catch (error) {
+    console.error('Erreur lors de la suppression de la tâche:', error)
+    snackbarStore.error("Erreur lors de la suppression de l'exercice.")
+  } finally {
+    deletingTaskId.value = null
+  }
+}
+
 const handleExpandedChange = (expandedItems) => {
   expandedTasks.value = expandedItems
 }
@@ -179,6 +256,19 @@ const loadAllValidations = async () => {
 const onValidationCreated = () => {
   validationDialog.value = false
   selectedTask.value = null
+}
+
+async function createTask(payload) {
+  try {
+    await api.post(`/trainings/${trainingId.value}/user/${targetUserId.value}/tasks`, payload)
+
+    await trainingStore.fetchTasks(trainingId.value)
+    snackbarStore.success('Exercice ajouté avec succès !')
+    showCreateTask.value = false
+  } catch (e) {
+    console.error('Error creating task:', e)
+    snackbarStore.error("Erreur lors de la création de l'exercice.")
+  }
 }
 
 onMounted(async () => {
