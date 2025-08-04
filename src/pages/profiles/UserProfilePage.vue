@@ -121,6 +121,8 @@ async function fetchUserProfile() {
     const resp = await api.get(`/profiles/${userId.value}`)
     user.value = resp.data
   } catch (e) {
+    console.error('Error fetching user profile:', e)
+    snackbarStore.error('Erreur lors du chargement du profil utilisateur.')
     user.value = null
   } finally {
     loading.value = false
@@ -187,24 +189,24 @@ const goToDiet = (dietId) => {
   })
 }
 
-// Création training
 async function createTraining({ name, description }) {
   try {
     await api.post(`/trainings/${userId.value}`, { name, description })
     await fetchUserTrainings()
     snackbarStore.success('Training créé avec succès !')
   } catch (e) {
+    console.error(e)
     snackbarStore.error('Erreur lors de la création du training.')
   }
 }
 
-// Création diet
 async function createDiet({ name, description }) {
   try {
     await api.post(`/diets/${userId.value}`, { name, description })
     await fetchUserDiets()
     snackbarStore.success('Diet créée avec succès !')
   } catch (e) {
+    console.error(e)
     snackbarStore.error('Erreur lors de la création du diet.')
   }
 }
