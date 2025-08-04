@@ -1,3 +1,4 @@
+<!-- pages/training/TrainingDetailPage.vue -->
 <template>
   <v-container class="training-detail-page">
     <div v-if="trainingStore.currentTraining" class="training-header mb-6">
@@ -83,7 +84,9 @@
         </template>
 
         <template v-slot:item.actions="{ item }">
+          <!-- Bouton Valider pour les utilisateurs normaux -->
           <v-btn
+            v-if="!canCreateTask"
             color="primary"
             size="small"
             @click="openValidationDialog(item)"
@@ -91,6 +94,18 @@
           >
             <v-icon small class="mr-1">mdi-plus</v-icon>
             Valider
+          </v-btn>
+          
+          <!-- Bouton Supprimer pour les coaches/admins -->
+          <v-btn
+            v-if="canCreateTask"
+            color="error"
+            size="small"
+            @click="openDeleteTaskDialog(item)"
+            :loading="deletingTaskId === item.id"
+          >
+            <v-icon small class="mr-1">mdi-delete</v-icon>
+            Supprimer
           </v-btn>
         </template>
 
@@ -118,6 +133,27 @@
       :training-id="trainingId"
       @validation-created="onValidationCreated"
     />
+
+    <!-- Floating Action Button pour coach/admin + profil ciblé différent -->
+    <FloatingActionButton
+      v-if="canCreateTask"
+      icon="mdi-plus"
+      @click="showCreateTask = true"
+    />
+
+    <!-- Modal création task -->
+    <TaskCreateDialog
+      v-model="showCreateTask"
+      @created="createTask"
+    />
+
+    <!-- Modal confirmation suppression -->
+    <DeleteConfirmationDialog
+      v-model="deleteTaskDialog"
+      :title="`Supprimer l'exercice`"
+      :message="`Êtes-vous sûr de vouloir supprimer l'exercice '${selectedTaskToDelete?.exercise_name}' ? Cette action est irréversible.`"
+      @confirm="confirmDeleteTask"
+    />
   </v-container>
 </template>
 
@@ -125,18 +161,42 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useTrainingStore } from '@/stores/training'
+import { useAuthStore } from '@/stores/auth'
+import { useContextualStore } from '@/stores/contextual'
+import { useSnackbarStore } from '@/stores/snackbar'
+import api from '@/plugins/axios'
+import FloatingActionButton from '@/components/FloatingActionButton.vue'
+import TaskCreateDialog from '@/components/TaskCreateDialog.vue'
 import ValidationDialog from '@/components/ValidationDialog.vue'
 import ValidationsList from '@/components/ValidationsList.vue'
+import DeleteConfirmationDialog from '@/components/DeleteConfirmationDialog.vue'
 
 const route = useRoute()
 const router = useRouter()
 const trainingStore = useTrainingStore()
+const authStore = useAuthStore()
+const contextual = useContextualStore()
+const snackbarStore = useSnackbarStore()
 
 const validationDialog = ref(false)
 const selectedTask = ref(null)
 const expandedTasks = ref([])
+const showCreateTask = ref(false)
+
+// Variables pour la suppression
+const deleteTaskDialog = ref(false)
+const selectedTaskToDelete = ref(null)
+const deletingTaskId = ref(null)
 
 const trainingId = computed(() => route.params.id)
+const targetUserId = computed(() => contextual.userProfileId || route.query.userId)
+
+// Condition stricte: coach/admin ET profil ciblé différent du connecté
+const canCreateTask = computed(() =>
+  ['coach', 'admin'].some(role => authStore.userRoles?.includes(role)) &&
+  targetUserId.value &&
+  targetUserId.value !== authStore.userId
+)
 
 const headers = [
   { title: 'Exercice', key: 'exercise_name', sortable: true },
@@ -164,6 +224,38 @@ const openValidationDialog = (task) => {
   validationDialog.value = true
 }
 
+const openDeleteTaskDialog = (task) => {
+  selectedTaskToDelete.value = task
+  deleteTaskDialog.value = true
+}
+
+const confirmDeleteTask = async () => {
+  if (!selectedTaskToDelete.value) return
+  
+  deletingTaskId.value = selectedTaskToDelete.value.id
+  
+  try {
+    await api.delete(
+      `/trainings/${trainingId.value}/user/${targetUserId.value}/tasks/${selectedTaskToDelete.value.id}`
+    )
+    
+    // Recharger les tâches après suppression
+    await trainingStore.fetchTasks(trainingId.value)
+    
+    snackbarStore.success(`Exercice '${selectedTaskToDelete.value.exercise_name}' supprimé avec succès !`)
+    
+    // Fermer la modal et réinitialiser
+    deleteTaskDialog.value = false
+    selectedTaskToDelete.value = null
+    
+  } catch (error) {
+    console.error('Erreur lors de la suppression de la tâche:', error)
+    snackbarStore.error("Erreur lors de la suppression de l'exercice.")
+  } finally {
+    deletingTaskId.value = null
+  }
+}
+
 const handleExpandedChange = (expandedItems) => {
   expandedTasks.value = expandedItems
 }
@@ -179,6 +271,24 @@ const loadAllValidations = async () => {
 const onValidationCreated = () => {
   validationDialog.value = false
   selectedTask.value = null
+}
+
+// Création de la tâche (exercice)
+async function createTask(payload) {
+  try {
+    const response = await api.post(
+      `/trainings/${trainingId.value}/user/${targetUserId.value}/tasks`,
+      payload
+    )
+    console.log('API response:', response)
+    
+    await trainingStore.fetchTasks(trainingId.value)
+    snackbarStore.success('Exercice ajouté avec succès !')
+    showCreateTask.value = false // Fermer la modal après succès
+  } catch (e) {
+    console.error('Error creating task:', e)
+    snackbarStore.error("Erreur lors de la création de l'exercice.")
+  }
 }
 
 onMounted(async () => {
