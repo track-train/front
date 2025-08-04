@@ -1,11 +1,11 @@
 <template>
   <v-container class="groups-coach-page">
     <div class="title-container">
-      <h2 class="text-h5 font-weight-bold text-center my-4">Mes groupes existant</h2>
+      <h2 class="text-h5 font-weight-bold text-center my-4">Mes groupes existants</h2>
     </div>
 
     <div v-if="groupsStore.loading" class="text-center py-8">
-      <v-progress-circular size="48" indeterminate color="primary"/>
+      <v-progress-circular size="48" indeterminate color="primary" />
     </div>
 
     <v-alert v-if="groupsStore.fetchError" type="error" class="mb-4">
@@ -20,7 +20,13 @@
       <v-tooltip v-if="!canCreateGroup">
         <template #activator="{ on, attrs }">
           <span>
-            <v-btn color="primary" @click="openDialog" :disabled="!canCreateGroup" v-bind="attrs" v-on="on">
+            <v-btn
+              color="primary"
+              @click="openDialog"
+              :disabled="!canCreateGroup"
+              v-bind="attrs"
+              v-on="on"
+            >
               <v-icon left>mdi-plus</v-icon>
               Créer un groupe
             </v-btn>
@@ -28,11 +34,7 @@
         </template>
         <span>Seul le propriétaire peut créer un groupe ici</span>
       </v-tooltip>
-      <v-btn
-        v-else
-        color="primary"
-        @click="openDialog"
-      >
+      <v-btn v-else color="primary" @click="openDialog">
         <v-icon left>mdi-plus</v-icon>
         Créer un groupe
       </v-btn>
@@ -40,15 +42,8 @@
 
     <!-- Grille des groupes -->
     <v-row v-else class="mt-2" dense>
-      <v-col
-        v-for="group in groupsStore.groups"
-        :key="group.id"
-        cols="12"
-        sm="6"
-        md="4"
-        lg="3"
-      >
-        <GroupCard :group="group"/>
+      <v-col v-for="group in groupsStore.groups" :key="group.id" cols="12" sm="6" md="4" lg="3">
+        <GroupCard :group="group" />
       </v-col>
     </v-row>
 
@@ -72,23 +67,12 @@
       </template>
       <span>Seul le propriétaire peut créer un groupe ici</span>
     </v-tooltip>
-    <v-btn
-      v-else
-      class="fab"
-      color="primary"
-      fab
-      size="large"
-      @click="openDialog"
-    >
+    <v-btn v-else class="fab" color="primary" fab size="large" @click="openDialog">
       <v-icon large>mdi-plus</v-icon>
     </v-btn>
 
     <!-- Dialog création de groupe -->
-    <GroupCreateDialog
-      v-model="dialog"
-      :loading="groupsStore.loading"
-      @submit="createGroup"
-    />
+    <GroupCreateDialog v-model="dialog" :loading="groupsStore.loading" @submit="createGroup" />
   </v-container>
 </template>
 

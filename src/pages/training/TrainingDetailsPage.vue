@@ -1,4 +1,3 @@
-<!-- pages/training/TrainingDetailPage.vue -->
 <template>
   <v-container class="training-detail-page">
     <div v-if="trainingStore.currentTraining" class="training-header mb-6">
