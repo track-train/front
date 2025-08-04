@@ -29,7 +29,7 @@
           class="mb-4"
         />
 
-        <v-card v-if="planType === 'macro'" variant="outlined" class="pa-4">
+        <v-card v-if="planType === PLAN_TYPE_MACRO" variant="outlined" class="pa-4">
           <v-card-title class="pa-0 mb-3">
             <span class="text-subtitle-1">Exemple pour macroplan</span>
           </v-card-title>
@@ -93,7 +93,7 @@
         </v-card>
 
         <v-card
-          v-if="planType === 'meal'"
+          v-if="planType === PLAN_TYPE_MEAL"
           variant="outlined"
           class="pa-4"
           style="position: relative"
@@ -191,6 +191,9 @@
 <script setup>
 import { ref, watch, computed } from 'vue'
 
+const PLAN_TYPE_MACRO = 'macro'
+const PLAN_TYPE_MEAL = 'meal'
+
 const props = defineProps({
   modelValue: Boolean,
 })
@@ -204,7 +207,7 @@ watch(
 watch(show, (v) => emit('update:modelValue', v))
 
 const loading = ref(false)
-const planType = ref('macro')
+const planType = ref(PLAN_TYPE_MACRO)
 const planName = ref('')
 
 const timePickerDialog = ref(false)
@@ -212,8 +215,8 @@ const selectedTime = ref(null)
 const currentMealIndex = ref(0)
 
 const planTypes = [
-  { text: 'Plan Macro', value: 'macro' },
-  { text: 'Plan Repas', value: 'meal' },
+  { text: 'Plan Macro', value: PLAN_TYPE_MACRO },
+  { text: 'Plan Repas', value: PLAN_TYPE_MEAL },
 ]
 
 const macroForm = ref({
@@ -237,7 +240,7 @@ const mealForm = ref({
 const canSubmit = computed(() => {
   if (!planName.value) return false
 
-  if (planType.value === 'macro') {
+  if (planType.value === PLAN_TYPE_MACRO) {
     return Object.values(macroForm.value).every((val) => val !== null && val !== '')
   } else {
     return mealForm.value.meals.every((meal) => meal.timing && meal.food)
@@ -275,7 +278,7 @@ const removeMeal = (index) => {
 
 const resetForm = () => {
   planName.value = ''
-  planType.value = 'macro'
+  planType.value = PLAN_TYPE_MACRO
 
   macroForm.value = {
     protein: 150,
@@ -307,9 +310,9 @@ const submit = async () => {
   loading.value = true
 
   let payload
-  if (planType.value === 'macro') {
+  if (planType.value === PLAN_TYPE_MACRO) {
     payload = {
-      type: 'macro',
+      type: PLAN_TYPE_MACRO,
       data: {
         name: planName.value,
         ...macroForm.value,
@@ -317,7 +320,7 @@ const submit = async () => {
     }
   } else {
     payload = {
-      type: 'meal',
+      type: PLAN_TYPE_MEAL,
       data: {
         name: planName.value,
         meals: mealForm.value.meals,
