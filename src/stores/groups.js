@@ -24,7 +24,7 @@ export const useGroupsStore = defineStore('groups', {
           this.groups = []
           this.fetchError = null
         } else {
-          this.fetchError = "Erreur lors du chargement des groupes."
+          this.fetchError = 'Erreur lors du chargement des groupes.'
           this.groups = []
         }
       } finally {
@@ -43,9 +43,19 @@ export const useGroupsStore = defineStore('groups', {
     },
     async deleteGroup(groupId) {
       this.loading = true
+      this.fetchError = null
       try {
         await api.delete(`/groups/${groupId}`)
-        this.groups = this.groups.filter(g => g.id !== groupId)
+        this.groups = this.groups.filter((g) => g.id !== groupId)
+      } catch (err) {
+        console.error('Error deleting group:', err)
+        if (err.response?.status === 404) {
+          this.fetchError = 'Groupe non trouvé.'
+        } else if (err.response?.status === 403) {
+          this.fetchError = "Vous n'avez pas la permission de supprimer ce groupe."
+        } else {
+          this.fetchError = 'Erreur lors de la suppression du groupe.'
+        }
       } finally {
         this.loading = false
       }
@@ -53,6 +63,6 @@ export const useGroupsStore = defineStore('groups', {
     reset() {
       this.groups = []
       this.fetchError = null
-    }
-  }
+    },
+  },
 })
