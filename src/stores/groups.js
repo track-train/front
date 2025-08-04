@@ -33,10 +33,20 @@ export const useGroupsStore = defineStore('groups', {
     },
     async createGroup(payload) {
       this.loading = true
+      this.fetchError = null
       try {
         const response = await api.post('/groups', payload)
         this.groups.push(response.data)
         return response.data
+      } catch (err) {
+        console.error('Error creating group:', err)
+        if (err.response?.status === 400) {
+          this.fetchError = 'Données invalides pour la création du groupe.'
+        } else if (err.response?.status === 403) {
+          this.fetchError = "Vous n'avez pas la permission de créer un groupe."
+        } else {
+          this.fetchError = 'Erreur lors de la création du groupe.'
+        }
       } finally {
         this.loading = false
       }
