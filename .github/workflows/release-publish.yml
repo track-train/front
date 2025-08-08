@@ -313,6 +313,7 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64/v8
+          target: prod
           tags: ${{ env.DOCKER_TAGS }}
           labels: |
             org.opencontainers.image.title=Express Template Application
