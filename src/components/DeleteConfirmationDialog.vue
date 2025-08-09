@@ -1,32 +1,25 @@
 <template>
   <v-dialog v-model="dialog" max-width="400px" persistent>
-    <v-card>
+    <v-card class="delete-card">
       <v-card-title class="d-flex align-center">
-        <v-icon class="mr-2" color="error">mdi-alert-circle</v-icon>
-        <span class="text-h6">Confirmer la suppression</span>
+        <v-icon class="mr-2" color="#920002">mdi-alert-circle</v-icon>
+        <span class="text-h6 text-white">Confirmer la suppression</span>
       </v-card-title>
-
-      <v-divider />
-
       <v-card-text class="pt-4">
         <div class="text-center">
-          <v-icon size="64" color="error" class="mb-3">mdi-delete-forever</v-icon>
-          <p class="text-body-1 mb-2">Êtes-vous sûr de vouloir supprimer cette validation ?</p>
+          <v-icon size="64" color="#920002" class="mb-3">mdi-delete-forever</v-icon>
+          <p class="text-body-1 mb-2 text-white">Êtes-vous sûr de vouloir supprimer cette validation ?</p>
           <p class="text-body-2 text-grey">
             Cette action est irréversible et supprimera définitivement les données de cette session.
           </p>
         </div>
       </v-card-text>
-
-      <v-divider />
-
       <v-card-actions class="pa-4">
         <v-spacer />
-        <v-btn color="grey" variant="text" @click="cancel" :disabled="loading"> Annuler </v-btn>
-        <v-btn color="error" @click="confirm" :loading="loading">
-          <v-icon class="mr-1">mdi-delete</v-icon>
+        <TertiaryButton @click="cancel" :disabled="loading"> Annuler </TertiaryButton>
+        <PrimaryButton prepend-icon="mdi-delete" @click="confirm" :loading="loading">
           Supprimer
-        </v-btn>
+        </PrimaryButton>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -62,3 +55,9 @@ const cancel = () => {
   dialog.value = false
 }
 </script>
+
+<style lang="scss" scoped>
+.delete-card {
+  background-color: #00231f !important;
+}
+</style>

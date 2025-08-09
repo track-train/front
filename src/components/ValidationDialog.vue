@@ -1,13 +1,13 @@
 <template>
   <v-dialog v-model="dialog" max-width="600px" persistent>
-    <v-card>
+    <v-card class="validation-card">
       <v-card-title class="d-flex align-center">
         <v-icon class="mr-2" color="success">mdi-check-circle</v-icon>
         <span class="text-h6">Valider l'exercice</span>
         <v-spacer />
-        <v-btn icon @click="closeDialog">
+        <TertiaryButton @click="closeDialog">
           <v-icon>mdi-close</v-icon>
-        </v-btn>
+        </TertiaryButton>
       </v-card-title>
 
       <v-divider />
@@ -118,11 +118,10 @@
 
       <v-card-actions class="pa-4">
         <v-spacer />
-        <v-btn color="grey" variant="text" @click="closeDialog"> Annuler </v-btn>
-        <v-btn color="success" :loading="loading" :disabled="!formValid" @click="submitValidation">
-          <v-icon class="mr-1">mdi-check</v-icon>
+        <TertiaryButton @click="closeDialog"> Annuler </TertiaryButton>
+        <PrimaryButton prepend-icon="mdi-check" :loading="loading" :disabled="!formValid" @click="submitValidation">
           Valider l'exercice
-        </v-btn>
+        </PrimaryButton>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -258,7 +257,7 @@ const submitValidation = async () => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .exercise-info {
   border-left: 4px solid #2196f3;
 }
@@ -269,5 +268,9 @@ const submitValidation = async () => {
 
 :deep(.v-slider-thumb__label) {
   font-weight: bold;
+}
+
+.validation-card {
+  background-color: #00231f !important;;
 }
 </style>

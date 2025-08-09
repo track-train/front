@@ -31,9 +31,9 @@
         </v-row>
 
         <div v-if="trainings.length > 3" class="text-center mt-3">
-          <v-btn color="primary" outlined @click="goToAllTrainings">
+          <PrimaryButton @click="goToAllTrainings">
             Voir tous les trainings ({{ trainings.length }})
-          </v-btn>
+          </PrimaryButton>
         </div>
       </div>
     </v-card-text>
@@ -66,7 +66,7 @@ const truncateText = (text, maxLength) => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .user-trainings-card {
   min-height: 200px;
 }

@@ -14,15 +14,15 @@
           </div>
           <v-spacer />
           <div class="d-flex gap-2">
-            <v-chip color="success"> {{ dietStore.totalMacroPlans }} macro plan(s) </v-chip>
-            <v-chip color="warning"> {{ dietStore.totalMealPlans }} meal plan(s) </v-chip>
+            <v-chip color="#22c55e"> {{ dietStore.totalMacroPlans }} macro plan(s) </v-chip>
+            <v-chip color="#f97316"> {{ dietStore.totalMealPlans }} meal plan(s) </v-chip>
           </div>
         </v-card-title>
       </v-card>
     </div>
 
     <div v-if="isLoading" class="text-center py-8">
-      <v-progress-circular indeterminate color="success" size="64"></v-progress-circular>
+      <v-progress-circular indeterminate color="#22c55e" size="64"></v-progress-circular>
       <p class="mt-4">Chargement des plans...</p>
     </div>
 
@@ -37,21 +37,29 @@
     </v-alert>
 
     <div v-if="!isLoading">
-      <v-tabs v-model="activeTab" class="mb-6" color="primary">
-        <v-tab value="macro">
-          <v-icon class="mr-2">mdi-nutrition</v-icon>
-          Plans Macro ({{ dietStore.totalMacroPlans }})
-        </v-tab>
-        <v-tab value="meals">
-          <v-icon class="mr-2">mdi-food</v-icon>
-          Plans Repas ({{ dietStore.totalMealPlans }})
-        </v-tab>
-      </v-tabs>
+      <div class="d-flex">
+        <v-tabs v-model="activeTab" class="mb-6" color="#f97316">
+          <v-tab value="macro" base-color="white">
+            <v-icon class="mr-2">mdi-nutrition</v-icon>
+            Plans Macro ({{ dietStore.totalMacroPlans }})
+          </v-tab>
+          <v-tab value="meals" base-color="white">
+            <v-icon class="mr-2">mdi-food</v-icon>
+            Plans Repas ({{ dietStore.totalMealPlans }})
+          </v-tab>
+        </v-tabs>
+        <VSpacer />
+        <PrimaryButton v-if="canCreatePlan" prepend-icon="mdi-plus" @click="showCreatePlan = true">
+          Ajouter
+        </PrimaryButton>
+      </div>
+
 
       <v-window v-model="activeTab">
         <v-window-item value="macro">
           <div v-if="dietStore.macroPlans.length === 0" class="text-center py-8">
             <v-icon size="80" color="grey lighten-2">mdi-nutrition-off</v-icon>
+
             <h2 class="text-h5 mt-4 text-grey">Aucun plan macro disponible</h2>
             <p class="text-body-1 text-grey">
               Aucun plan nutritionnel macro n'a été configuré pour cette diet.
@@ -59,12 +67,13 @@
           </div>
 
           <div v-else>
-            <div class="d-flex align-center justify-space-between mb-4">
+            <div class="d-flex align-center mb-4">
+              <v-icon class="mr-2 text-white" color="#22c55e">mdi-nutrition</v-icon>
               <h2 class="text-h5">
-                <v-icon class="mr-2" color="success">mdi-nutrition</v-icon>
                 Plans macro disponibles
               </h2>
-              <v-chip color="success" variant="outlined">
+              <VSpacer />
+              <v-chip color="#22c55e">
                 {{ dietStore.macroPlans.length }} plan(s)
               </v-chip>
             </div>
@@ -102,9 +111,10 @@
                 <v-icon class="mr-2" color="warning">mdi-food</v-icon>
                 Plans repas disponibles
               </h2>
-              <v-chip color="warning" variant="outlined">
+              <v-chip color="#f97316">
                 {{ dietStore.mealPlans.length }} plan(s) - {{ dietStore.totalMealsCount }} repas
               </v-chip>
+
             </div>
 
             <v-row>
@@ -124,8 +134,6 @@
       </v-window>
     </div>
 
-    <FloatingActionButton v-if="canCreatePlan" icon="mdi-plus" @click="showCreatePlan = true" />
-
     <DietPlanCreateDialog v-model="showCreatePlan" @created="createPlan" />
   </v-container>
 </template>
@@ -140,7 +148,6 @@ import { useSnackbarStore } from '@/stores/snackbar'
 import api from '@/plugins/axios'
 import MacroPlanCard from '@/components/MacroPlanCard.vue'
 import MealPlanCard from '@/components/MealPlanCard.vue'
-import FloatingActionButton from '@/components/FloatingActionButton.vue'
 import DietPlanCreateDialog from '@/components/DietPlanCreateDialog.vue'
 
 const route = useRoute()
@@ -225,7 +232,7 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped>
+<style alng="scss" scoped>
 .diet-detail-page {
   max-width: 1400px;
 }

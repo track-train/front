@@ -1,12 +1,12 @@
 <template>
   <v-dialog v-model="localShow" max-width="600px">
-    <v-card>
-      <v-card-title>
+    <v-card class="user-detail-modal">
+      <v-card-title class="d-flex">
         <span class="text-h5 d-flex">Détails de l'utilisateur</span>
         <v-spacer />
-        <v-btn icon @click="localShow = false">
+        <TertiaryButton @click="localShow = false">
           <v-icon>mdi-close</v-icon>
-        </v-btn>
+        </TertiaryButton>
       </v-card-title>
 
       <v-card-text v-if="user">
@@ -18,7 +18,6 @@
                 <v-text-field
                   v-model="editedUser.email"
                   label="Email"
-                  variant="outlined"
                   :loading="fieldLoading.email"
                   :class="{ 'field-saving': fieldLoading.email }"
                   @blur="onFieldBlur('email')"
@@ -40,7 +39,6 @@
                 <v-text-field
                   v-model="editedUser.name"
                   label="Nom"
-                  variant="outlined"
                   :loading="fieldLoading.name"
                   :class="{ 'field-saving': fieldLoading.name }"
                   @blur="onFieldBlur('name')"
@@ -63,7 +61,7 @@
                   v-model="editedUser.sex"
                   :items="['Homme', 'Femme', 'Autre']"
                   label="Sexe"
-                  variant="outlined"
+                  density="compact"
                   :loading="fieldLoading.sex"
                   :class="{ 'field-saving': fieldLoading.sex }"
                   @blur="onFieldBlur('sex')"
@@ -82,12 +80,11 @@
 
             <!-- Âge -->
             <v-col cols="12" md="6">
-              <div class="field-container">
+              <div class="field-container h-100">
                 <v-text-field
                   v-model.number="editedUser.age"
                   label="Âge"
                   type="number"
-                  variant="outlined"
                   :loading="fieldLoading.age"
                   :class="{ 'field-saving': fieldLoading.age }"
                   @blur="onFieldBlur('age')"
@@ -109,7 +106,6 @@
                 <v-text-field
                   v-model="editedUser.contact"
                   label="Contact"
-                  variant="outlined"
                   :loading="fieldLoading.contact"
                   :class="{ 'field-saving': fieldLoading.contact }"
                   @blur="onFieldBlur('contact')"
@@ -133,7 +129,6 @@
                   label="Tarif (€)"
                   type="number"
                   step="0.01"
-                  variant="outlined"
                   :loading="fieldLoading.pricing"
                   :class="{ 'field-saving': fieldLoading.pricing }"
                   @blur="onFieldBlur('pricing')"
@@ -158,7 +153,6 @@
                   label="Rôles"
                   multiple
                   chips
-                  variant="outlined"
                   :loading="fieldLoading.roles"
                   :class="{ 'field-saving': fieldLoading.roles }"
                   @blur="onFieldBlur('roles')"
@@ -180,7 +174,6 @@
                 <v-textarea
                   v-model="editedUser.description"
                   label="Description"
-                  variant="outlined"
                   rows="3"
                   :loading="fieldLoading.description"
                   :class="{ 'field-saving': fieldLoading.description }"
@@ -202,7 +195,6 @@
                 <v-textarea
                   v-model="editedUser.legacy"
                   label="Legacy"
-                  variant="outlined"
                   rows="3"
                   :loading="fieldLoading.legacy"
                   :class="{ 'field-saving': fieldLoading.legacy }"
@@ -220,8 +212,7 @@
 
             <!-- Section Password -->
             <v-col cols="12">
-              <v-divider class="my-4" />
-              <h3>Changer le mot de passe</h3>
+              <h3 class="text-white">Changer le mot de passe</h3>
             </v-col>
 
             <v-col cols="12">
@@ -230,7 +221,6 @@
                   v-model="newPassword"
                   label="Nouveau mot de passe"
                   type="password"
-                  variant="outlined"
                   :loading="fieldLoading.password"
                   :class="{ 'field-saving': fieldLoading.password }"
                   placeholder="Entrer un nouveau mot de passe"
@@ -248,12 +238,8 @@
             </v-col>
 
             <!-- Infos read-only -->
-            <v-col cols="12">
-              <v-divider class="my-4" />
-            </v-col>
-
             <v-col cols="12" md="6">
-              <v-text-field :model-value="user.id" label="ID" readonly variant="outlined" />
+              <v-text-field :model-value="user.id" label="ID" readonly  />
             </v-col>
 
             <v-col cols="12" md="6">
@@ -261,7 +247,7 @@
                 :model-value="formatDate(user.created_at)"
                 label="Date de création"
                 readonly
-                variant="outlined"
+
               />
             </v-col>
           </v-row>
@@ -270,7 +256,7 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn @click="localShow = false"> Fermer </v-btn>
+        <TertiaryButton @click="localShow = false"> Fermer </TertiaryButton>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -461,12 +447,11 @@ const formatDate = (dateString) => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .field-container {
   position: relative;
   display: flex;
   align-items: flex-start;
-  gap: 8px;
 }
 
 .field-container :deep(.v-input) {
@@ -502,5 +487,9 @@ const formatDate = (dateString) => {
 
 .v-divider {
   margin: 1rem 0;
+}
+
+.user-detail-modal {
+  background-color: #00231f !important;
 }
 </style>

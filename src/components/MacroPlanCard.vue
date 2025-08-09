@@ -1,8 +1,8 @@
 <template>
-  <v-card class="macro-plan-card" elevation="3">
+  <v-card class="macro-plan-card pt-0" elevation="3">
     <v-card-title class="plan-header">
       <div class="d-flex align-center justify-center w-100">
-        <v-icon class="mr-2" color="primary">mdi-nutrition</v-icon>
+        <v-icon class="mr-2" color="white">mdi-nutrition</v-icon>
         <span class="text-h6 font-weight-bold">{{ macroPlan.name }}</span>
       </div>
     </v-card-title>
@@ -11,45 +11,45 @@
 
     <v-card-text class="pa-4">
       <div class="macros-grid">
-        <div class="macro-item">
-          <v-chip color="error" variant="outlined" size="small" class="macro-label">
+        <v-card class="macro-item">
+          <v-chip color="#eab308"  size="small" class="macro-label">
             Protéines (g)
           </v-chip>
           <div class="macro-value">{{ Math.round(macroPlan.protein || 0) }}</div>
-        </div>
+        </v-card>
 
-        <div class="macro-item">
-          <v-chip color="warning" variant="outlined" size="small" class="macro-label">
+        <v-card class="macro-item">
+          <v-chip color="#f97316"  size="small" class="macro-label">
             Glucides (g)
           </v-chip>
           <div class="macro-value">{{ Math.round(macroPlan.carbohydrates || 0) }}</div>
-        </div>
+        </v-card>
 
-        <div class="macro-item">
-          <v-chip color="info" variant="outlined" size="small" class="macro-label">
+        <v-card class="macro-item">
+          <v-chip color="#2dd4bf"  size="small" class="macro-label">
             Lipides (g)
           </v-chip>
           <div class="macro-value">{{ Math.round(macroPlan.lipids || 0) }}</div>
-        </div>
+        </v-card>
 
-        <div class="macro-item">
-          <v-chip color="success" variant="outlined" size="small" class="macro-label">
+        <v-card class="macro-item">
+          <v-chip color="#22c55e"  size="small" class="macro-label">
             Fibre (g)
           </v-chip>
           <div class="macro-value">{{ Math.round(macroPlan.fiber || 0) }}</div>
-        </div>
+        </v-card>
 
-        <div class="macro-item">
-          <v-chip color="blue" variant="outlined" size="small" class="macro-label"> Eau L </v-chip>
+        <v-card class="macro-item">
+          <v-chip color="#2dd4bf"  size="small" class="macro-label"> Eau L </v-chip>
           <div class="macro-value">{{ macroPlan.water || 0 }}</div>
-        </div>
+        </v-card>
 
-        <div class="macro-item total-calories">
-          <v-chip color="primary" variant="elevated" size="small" class="macro-label">
+        <v-card class="macro-item total-calories">
+          <v-chip color="black" size="small" class="macro-label">
             Total Kcal
           </v-chip>
           <div class="macro-value total-value">{{ Math.round(macroPlan.kilocalorie || 0) }}</div>
-        </div>
+        </v-card>
       </div>
     </v-card-text>
 
@@ -63,7 +63,7 @@
         </div>
         <v-progress-linear
           :model-value="(macroPlan.kilocalorie / maxCalories) * 100"
-          color="primary"
+          color="#22c55e"
           height="6"
           rounded
         />
@@ -85,7 +85,7 @@ defineProps({
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .macro-plan-card {
   border-radius: 12px;
   transition: all 0.3s ease;
@@ -98,7 +98,7 @@ defineProps({
 }
 
 .plan-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #22c55e 0%, #2dd4bf 100%);
   color: white;
   padding: 16px;
 }
@@ -129,17 +129,17 @@ defineProps({
 .macro-value {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #2c3e50;
+  color: #fff;
   margin-top: 4px;
 }
 
 .total-calories {
-  background: linear-gradient(135deg, #667eea20 0%, #764ba240 100%);
-  border: 2px solid #667eea;
+  background: linear-gradient(135deg, #22c55e 0%, #2dd4bf 100%);
+  border: 2px solid #22c55e;
 }
 
 .total-value {
-  color: #667eea;
+  color: white;
   font-size: 1.75rem;
 }
 

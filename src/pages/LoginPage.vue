@@ -1,46 +1,42 @@
 <template>
-  <VRow class="w-100 h-100">
-    <VCol cols="12" class="d-flex justify-center align-center">
-      <VCard width="400" class="card-glass pa-3">
-        <VCardTitle>Se connecter</VCardTitle>
-        <VCardText>
-          <VRow>
-            <VCol cols="12">
-              <VTextField
+  <v-row class="w-100 h-100">
+    <v-col cols="12" class="d-flex justify-center align-center">
+      <v-card width="400" class="card-glass pa-3">
+        <v-cardTitle>Se connecter</v-cardTitle>
+        <v-card-text>
+          <v-row>
+            <v-col cols="12">
+              <v-text-field
                 v-model="email"
                 label="Email"
                 type="email"
                 class="mb-3"
-                bg-color="#ffffff1a"
-                rounded="0.5rem"
               />
-            </VCol>
-            <VCol cols="12">
-              <VTextField
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
                 v-model="password"
                 label="Mot de passe"
                 type="password"
-                bg-color="#ffffff1a"
-                rounded="0.5rem"
               />
               <p v-if="authStore.error" class="text-red-600 mt-2">{{ authStore.error }}</p>
-            </VCol>
-            <VCol cols="12">
+            </v-col>
+            <v-col cols="12">
               <span class="register-class mt-3"
                 >Pas encore inscrit ? <RouterLink to="/register">Créer un compte</RouterLink></span
               >
-            </VCol>
-          </VRow>
-        </VCardText>
-        <VCardActions>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
           <VSpacer />
           <PrimaryButton @click="handleLogin" :loading="authStore.loading">
             Se connecter
           </PrimaryButton>
-        </VCardActions>
-      </VCard>
-    </VCol>
-  </VRow>
+        </v-card-actions>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script setup>

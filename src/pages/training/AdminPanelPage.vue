@@ -19,13 +19,12 @@
     </div>
 
     <div class="users-section">
-      <h2>Gestion des utilisateurs</h2>
+      <h2 class="text-white">Gestion des utilisateurs</h2>
 
       <v-text-field
         v-model="searchQuery"
         prepend-inner-icon="mdi-magnify"
         label="Rechercher un utilisateur..."
-        variant="outlined"
         clearable
         class="mb-4"
       />
@@ -101,7 +100,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .admin-panel {
   padding: 2rem;
 }
@@ -120,7 +119,7 @@ onMounted(() => {
 .stat-number {
   font-size: 2rem;
   font-weight: bold;
-  color: #1976d2;
+  color: #fff;
 }
 
 .stat-label {

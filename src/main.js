@@ -26,6 +26,8 @@ const vuetify = createVuetify({
   aliases: {
     PrimaryButton: components.VBtn,
     SecondaryButton: components.VBtn,
+    DeleteButton: components.VBtn,
+    TertiaryButton: components.VBtn,
   },
   defaults: {
     VCard: {
@@ -33,16 +35,40 @@ const vuetify = createVuetify({
     },
     PrimaryButton: {
       class: 'primary-button',
-      elevation: '0',
+      elevation: '2',
     },
     SecondaryButton: {
       class: 'secondary-button',
       elevation: '0',
     },
+    DeleteButton: {
+      class: 'delete-button',
+      elevation: '0',
+    },
+    TertiaryButton: {
+      class: 'tertiary-button',
+    },
     VTextField: {
-      variant: 'outlined',
+      variant: 'solo-filled',
       hideDetails: 'auto',
       density: 'compact',
+      bgColor: 'white',
+
+    },
+    VChip: {
+      variant: 'tonal',
+    },
+    VSelect: {
+      variant: 'solo-filled',
+      hideDetails: 'auto',
+      density: 'compact',
+      bgColor: 'white',
+    },
+    VTextarea: {
+      variant: 'solo-filled',
+      density: 'compact',
+      bgColor: 'white',
+      hideDetails: 'auto',
     },
   },
 })

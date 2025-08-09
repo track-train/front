@@ -1,23 +1,21 @@
 <template>
   <div class="validations-list">
     <div class="d-flex align-center mb-3">
-      <v-icon class="mr-2" color="success">mdi-check-circle-outline</v-icon>
+      <v-icon class="mr-2" color="#22c55e">mdi-check-circle-outline</v-icon>
       <h4 class="text-h6">Historique des validations - {{ taskName }}</h4>
       <v-spacer />
-      <v-btn
-        color="primary"
+      <SecondaryButton
         size="small"
-        variant="outlined"
+        prepend-icon="mdi-refresh"
         @click="refreshValidations"
         :loading="loading"
       >
-        <v-icon small class="mr-1">mdi-refresh</v-icon>
         Actualiser
-      </v-btn>
+      </SecondaryButton>
     </div>
 
     <div v-if="loading" class="text-center py-4">
-      <v-progress-circular indeterminate color="primary" size="32"></v-progress-circular>
+      <v-progress-circular indeterminate color="#22c55e" size="32"></v-progress-circular>
       <p class="mt-2 text-body-2">Chargement des validations...</p>
     </div>
 
@@ -33,16 +31,16 @@
     </div>
 
     <div v-else>
-      <v-card class="mb-4 stats-card" elevation="1" color="grey-lighten-5">
+      <v-card class="mb-4 stats-card" elevation="1">
         <v-card-text class="pa-3">
           <div class="d-flex align-center mb-2">
-            <v-icon class="mr-2" color="primary">mdi-chart-line</v-icon>
-            <h5 class="text-subtitle-1 mb-0">Statistiques pour {{ taskName }}</h5>
+            <v-icon class="mr-2" color="#22c55e">mdi-chart-line</v-icon>
+            <h5 class="text-subtitle-1 mb-0 text-white">Statistiques pour {{ taskName }}</h5>
           </div>
 
           <div class="stats-row d-flex align-center justify-space-between">
             <div class="stat-item-horizontal">
-              <h3 class="text-h5 font-weight-bold text-primary">
+              <h3 class="text-h5 font-weight-bold text-white">
                 {{ filteredValidations.length }}
               </h3>
               <p class="text-caption text-grey mb-0">
@@ -51,17 +49,17 @@
             </div>
 
             <div class="stat-item-horizontal">
-              <h3 class="text-h5 font-weight-bold text-success">{{ averageReps }}</h3>
+              <h3 class="text-h5 font-weight-bold text-white">{{ averageReps }}</h3>
               <p class="text-caption text-grey mb-0">Reps moy.</p>
             </div>
 
             <div class="stat-item-horizontal">
-              <h3 class="text-h5 font-weight-bold text-warning">{{ averageRir }}</h3>
+              <h3 class="text-h5 font-weight-bold text-white">{{ averageRir }}</h3>
               <p class="text-caption text-grey mb-0">RIR moy.</p>
             </div>
 
             <div class="stat-item-horizontal">
-              <h3 class="text-h5 font-weight-bold text-info">{{ averageDifficulty }}/10</h3>
+              <h3 class="text-h5 font-weight-bold text-white">{{ averageDifficulty }}/10</h3>
               <p class="text-caption text-grey mb-0">Difficulté</p>
             </div>
 
@@ -78,67 +76,61 @@
 
       <v-card class="mb-4" elevation="1">
         <v-card-title class="d-flex align-center py-3">
-          <v-icon class="mr-2" color="primary">mdi-filter</v-icon>
+          <v-icon class="mr-2" color="#22c55e">mdi-filter</v-icon>
           <span class="text-subtitle-1">Filtrer par période</span>
           <v-spacer />
-          <v-btn
+          <TertiaryButton
             v-if="dateRange.length > 0"
-            color="grey"
-            size="small"
-            variant="text"
+            prepend-icon="mdi-close"
             @click="clearDateFilter"
           >
-            <v-icon small class="mr-1">mdi-close</v-icon>
             Effacer
-          </v-btn>
+          </TertiaryButton>
         </v-card-title>
 
         <v-card-text class="pt-0">
-          <div class="d-flex align-center gap-4 flex-wrap">
-            <div class="date-range-picker">
-              <v-text-field
+          <v-row>
+            <v-col cols="12">
+              <SecondaryButton
+                size="small"
+                class="mr-2"
+                @click="setDateRange('today')"
+                :color="isActiveShortcut('today') ? 'primary' : 'default'"
+              >
+                Aujourd'hui
+              </SecondaryButton>
+              <SecondaryButton
+                size="small"
+                class="mr-2"
+                @click="setDateRange('week')"
+                :color="isActiveShortcut('week') ? 'primary' : 'default'"
+              >
+                7 derniers jours
+              </SecondaryButton>
+              <SecondaryButton
+                size="small"
+                class="mr-2"
+                @click="setDateRange('month')"
+                :color="isActiveShortcut('month') ? 'primary' : 'default'"
+              >
+                30 derniers jours
+              </SecondaryButton>
+            </v-col>
+            <v-col cols="12">
+              <VTextField
                 :model-value="dateRangeText"
                 label="Sélectionner une période"
-                prepend-icon="mdi-calendar"
+                prepend-inner-icon="mdi-calendar"
                 readonly
-                variant="outlined"
                 density="compact"
                 style="min-width: 280px"
                 @click="openDatePicker"
                 placeholder="Cliquez pour sélectionner une période"
               />
-            </div>
-
-            <div class="date-shortcuts d-flex gap-2">
-              <v-btn
-                size="small"
-                variant="outlined"
-                @click="setDateRange('today')"
-                :color="isActiveShortcut('today') ? 'primary' : 'default'"
-              >
-                Aujourd'hui
-              </v-btn>
-              <v-btn
-                size="small"
-                variant="outlined"
-                @click="setDateRange('week')"
-                :color="isActiveShortcut('week') ? 'primary' : 'default'"
-              >
-                7 derniers jours
-              </v-btn>
-              <v-btn
-                size="small"
-                variant="outlined"
-                @click="setDateRange('month')"
-                :color="isActiveShortcut('month') ? 'primary' : 'default'"
-              >
-                30 derniers jours
-              </v-btn>
-            </div>
-          </div>
-
+            </v-col>
+          </v-row>
           <div v-if="dateRangeText" class="mt-2">
-            <v-chip color="primary" size="small">
+            <v-chip color="#2dd4bf" size="small">
               <v-icon small class="mr-1">mdi-calendar-check</v-icon>
               {{ dateRangeText }}
             </v-chip>
@@ -150,21 +142,21 @@
       </v-card>
 
       <v-dialog v-model="datePickerDialog" max-width="420px">
-        <v-card>
+        <v-card class="date-picker-dialog">
           <v-card-title>
             <span class="text-h6">Sélectionner une période</span>
           </v-card-title>
-          <v-card-text class="pb-2">
+          <v-card-text class="d-flex flex-column align-center pb-2">
             <p class="text-body-2 text-grey mb-3">
               Cliquez sur une date de début, puis sur une date de fin pour sélectionner une période.
             </p>
 
             <div v-if="tempDateRange.length > 0" class="mb-3">
-              <v-chip color="primary" size="small" class="mr-2">
+              <v-chip color="#2dd4bf" size="small" class="mr-2">
                 <v-icon size="12" class="mr-1">mdi-calendar-start</v-icon>
                 Début: {{ formatDateShort(tempDateRange[0]) }}
               </v-chip>
-              <v-chip v-if="tempDateRange.length > 1" color="success" size="small">
+              <v-chip v-if="tempDateRange.length > 1" color="#2dd4bf" size="small">
                 <v-icon size="12" class="mr-1">mdi-calendar-end</v-icon>
                 Fin: {{ formatDateShort(tempDateRange[tempDateRange.length - 1]) }}
               </v-chip>
@@ -181,13 +173,13 @@
           </v-card-text>
           <v-card-actions>
             <v-spacer />
-            <v-btn color="grey" variant="text" @click="cancelDatePicker"> Annuler </v-btn>
-            <v-btn color="primary" @click="applyDateFilter" :disabled="tempDateRange.length === 0">
+            <TertiaryButton @click="cancelDatePicker"> Annuler </TertiaryButton>
+            <PrimaryButton @click="applyDateFilter" :disabled="tempDateRange.length === 0">
               Appliquer
               <span v-if="tempDateRange.length > 0" class="ml-1">
                 ({{ tempDateRange.length === 1 ? '1 jour' : getDaysBetween() + ' jours' }})
               </span>
-            </v-btn>
+            </PrimaryButton>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -210,7 +202,7 @@
               <v-icon>mdi-chevron-left</v-icon>
             </v-btn>
 
-            <span class="text-body-2">
+            <span class="text-body-2 mx-2">
               {{ currentSlide + 1 }}-{{
                 Math.min(currentSlide + slidesPerView, filteredValidations.length)
               }}
@@ -259,37 +251,35 @@
                     {{ validation.calculated_difficulty || 'N/A' }}/10
                   </v-chip>
 
-                  <v-btn
+                  <DeleteButton
                     icon
                     size="small"
-                    color="error"
-                    variant="text"
                     @click="openDeleteDialog(validation)"
                     :loading="
                       trainingStore.loading.creating && selectedValidationId === validation.id
                     "
                   >
                     <v-icon size="16">mdi-delete</v-icon>
-                  </v-btn>
+                  </DeleteButton>
                 </v-card-title>
 
                 <v-card-text class="pt-2">
                   <div class="metrics-grid mb-3">
                     <div class="metric-item">
-                      <v-icon size="16" color="info" class="mr-1">mdi-numeric</v-icon>
-                      <span class="text-body-2">{{ validation.set_number }} séries</span>
+                      <v-icon size="16" color="#2dd4bf" class="mr-1">mdi-numeric</v-icon>
+                      <span class="text-body-2 text-white">{{ validation.set_number }} séries</span>
                     </div>
                     <div class="metric-item">
-                      <v-icon size="16" color="info" class="mr-1">mdi-repeat</v-icon>
-                      <span class="text-body-2">{{ validation.repetitions }} reps</span>
+                      <v-icon size="16" color="#2dd4bf" class="mr-1">mdi-repeat</v-icon>
+                      <span class="text-body-2 text-white">{{ validation.repetitions }} reps</span>
                     </div>
                     <div class="metric-item">
-                      <v-icon size="16" color="warning" class="mr-1">mdi-timer</v-icon>
-                      <span class="text-body-2">{{ validation.rest_time }}min</span>
+                      <v-icon size="16" color="#f97316" class="mr-1">mdi-timer</v-icon>
+                      <span class="text-body-2 text-white">{{ validation.rest_time }}min</span>
                     </div>
                     <div class="metric-item">
-                      <v-icon size="16" color="success" class="mr-1">mdi-gauge</v-icon>
-                      <span class="text-body-2">RIR {{ validation.rir }}</span>
+                      <v-icon size="16" color="#22c55e" class="mr-1">mdi-gauge</v-icon>
+                      <span class="text-body-2 text-white">RIR {{ validation.rir }}</span>
                     </div>
                   </div>
 
@@ -504,9 +494,9 @@ const formatDateShort = (dateString) => {
 }
 
 const getDifficultyColor = (difficulty) => {
-  if (difficulty <= 3) return 'success'
-  if (difficulty <= 6) return 'warning'
-  if (difficulty <= 8) return 'orange'
+  if (difficulty <= 3) return '#22c55e'
+  if (difficulty <= 6) return '#f97316'
+  if (difficulty <= 8) return '#920002'
   return 'error'
 }
 
@@ -722,17 +712,16 @@ const cancelDelete = () => {
 }
 </script>
 
-<style scoped>
-/* Styles identiques au précédent */
+<style lang="scss" scoped>
 .validations-list {
-  background-color: #fafafa;
+  background-color: rgba(140, 245, 235, 0.15);
   border-radius: 8px;
   padding: 16px;
 }
 
 .stats-card {
   border-radius: 8px;
-  border-left: 4px solid #2196f3;
+  border-left: 4px solid #22c55e;
 }
 
 .stats-row {
@@ -748,10 +737,6 @@ const cancelDelete = () => {
   border-right: 1px solid #e0e0e0;
 }
 
-.date-range-picker {
-  flex: 1;
-  min-width: 280px;
-}
 
 .date-shortcuts {
   flex-wrap: wrap;
@@ -780,6 +765,7 @@ const cancelDelete = () => {
   transition: all 0.3s ease;
   border-radius: 8px;
   height: 100%;
+  background-color: #00231f !important;
 }
 
 .validation-card:hover {
@@ -821,9 +807,9 @@ const cancelDelete = () => {
 }
 
 .slide-controls {
-  background: rgba(255, 255, 255, 0.8);
+  background:  #00231f;
   border-radius: 20px;
-  padding: 4px 8px;
+  padding: 8px 12px;
 }
 
 @media (max-width: 1200px) {
@@ -860,5 +846,9 @@ const cancelDelete = () => {
   .date-shortcuts .v-btn {
     flex: 1;
   }
+}
+
+.date-picker-dialog {
+  background-color: #00231f !important;
 }
 </style>

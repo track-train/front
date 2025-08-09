@@ -1,30 +1,29 @@
-<!-- Version alternative avec un select pour la méthode -->
 <template>
-    <v-dialog v-model="show" max-width="500">
-      <v-card>
-        <v-card-title>
-          <span class="text-h6">Créer un nouvel exercice</span>
-        </v-card-title>
-        <v-card-text>
-          <v-text-field v-model="exercise_name" label="Nom de l'exercice" required />
-          <v-text-field v-model.number="rest_time" label="Temps de repos (min)" type="number" required />
-          <v-text-field v-model.number="repetitions" label="Répétitions" type="number" required />
-          <v-text-field v-model.number="set_number" label="Nombre de séries" type="number" required />
-          <v-select 
-            v-model="method" 
-            label="Méthode" 
-            :items="methodOptions"
-            required 
-          />
-          <v-text-field v-model.number="rir" label="RIR" type="number" required />
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn text @click="close">Annuler</v-btn>
-          <v-btn color="primary" :loading="loading" @click="submit">Créer</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+  <v-dialog v-model="show" max-width="500">
+    <v-card class="task-dialog">
+      <v-card-title>
+        <span class="text-h6">Créer un nouvel exercice</span>
+      </v-card-title>
+      <v-card-text>
+        <v-text-field v-model="exercise_name" label="Nom de l'exercice" required />
+        <v-text-field
+          v-model.number="rest_time"
+          label="Temps de repos (min)"
+          type="number"
+          required
+        />
+        <v-text-field v-model.number="repetitions" label="Répétitions" type="number" required />
+        <v-text-field v-model.number="set_number" label="Nombre de séries" type="number" required />
+        <v-select v-model="method" label="Méthode" :items="methodOptions" required />
+        <v-text-field v-model.number="rir" label="RIR" type="number" required />
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer />
+        <TertiaryButton @click="close">Annuler</TertiaryButton>
+        <PrimaryButton :loading="loading" @click="submit">Créer</PrimaryButton>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script setup>
@@ -36,8 +35,11 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue', 'created'])
 
 const show = ref(props.modelValue)
-watch(() => props.modelValue, (v) => show.value = v)
-watch(show, v => emit('update:modelValue', v))
+watch(
+  () => props.modelValue,
+  (v) => (show.value = v),
+)
+watch(show, (v) => emit('update:modelValue', v))
 
 const methodOptions = ['Standard', 'Superset', 'Drop set', 'Rest-pause', 'Pyramide']
 
@@ -63,9 +65,9 @@ async function submit() {
   if (!exercise_name.value || !method.value) {
     return
   }
-  
+
   loading.value = true
-  
+
   const payload = {
     exercise_name: exercise_name.value,
     rest_time: rest_time.value,
@@ -74,11 +76,18 @@ async function submit() {
     method: method.value,
     rir: rir.value,
   }
-  
+
   emit('created', payload)
-  
+
   await nextTick()
   loading.value = false
   close()
 }
 </script>
+
+<style lang="scss" scoped>
+.task-dialog {
+  background-color: #00231f;
+  color: white;
+}
+</style>

@@ -1,23 +1,18 @@
-<!-- HomePage.vue -->
 <template>
   <div class="home-page">
     <template v-if="auth.user">
-      <h1>Bienvenue {{ auth.user.name }}</h1>
-      <div class="user-section">
-        <UserCoachCard :coach="auth.user.coach" />
-
-        <TrainingList
-          :trainings="trainings"
-          @trainingClick="goToTraining"
-        >
-        </TrainingList>
-
-        <DietList
-          :diets="diets"
-          @dietClick="goToDiet"
-        >
-        </DietList>
-      </div>
+      <h1 class="my-4">Bienvenue {{ auth.user.name }}</h1>
+      <v-row>
+        <v-col cols="12" md="5">
+           <TrainingList :trainings="trainings" @trainingClick="goToTraining"> </TrainingList>
+        </v-col>
+        <v-col cols="12" md="7">
+          <UserCoachCard :coach="auth.user.coach" />
+        </v-col>
+        <v-col cols="12">
+          <DietList :diets="diets" @dietClick="goToDiet"> </DietList>
+        </v-col>
+      </v-row>
     </template>
 
     <template v-else>
@@ -106,7 +101,7 @@ const openCreateDiet = () => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .home-page {
   padding: 2rem;
 }
@@ -114,8 +109,5 @@ const openCreateDiet = () => {
   display: flex;
   flex-wrap: wrap;
   gap: 1rem;
-}
-.user-section {
-  margin-top: 2rem;
 }
 </style>

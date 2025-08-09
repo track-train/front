@@ -3,43 +3,43 @@
     <v-container>
       <v-row>
         <v-col cols="12" md="6">
-          <v-card class="mb-4">
-            <v-card-title>
+          <v-card class="mb-4 fill-height">
+            <v-card-title class="d-flex align-center">
               <v-avatar size="48" class="mr-3">
-                <v-icon size="36">mdi-account</v-icon>
+                <v-icon size="36" color="white">mdi-account</v-icon>
               </v-avatar>
-              <div>
-                <h2 class="mb-0">{{ user?.name || 'Profil utilisateur' }}</h2>
-                <div class="text-caption text-grey">
-                  <span v-if="user?.email">{{ user.email }}</span>
-                  <span v-if="user?.age"> — {{ user.age }} ans</span>
-                </div>
-                <div class="text-body-2 text-grey" v-if="user?.description">
-                  {{ user.description }}
-                </div>
-              </div>
-            </v-card-title>
-            <v-card-text>
-              <div class="mb-2" v-if="user?.roles">
+              <h2 class="mb-0 ml-2">{{ user?.name || 'Profil utilisateur' }}</h2>
+              <VSpacer b/>
+               <div class="mb-2" v-if="user?.roles">
                 <v-chip
                   v-for="role in user.roles"
                   :key="role"
-                  color="primary"
+                  color="#f97316"
                   class="mr-2"
                   small
-                  text-color="white"
                 >
                   {{ role }}
                 </v-chip>
               </div>
+            </v-card-title>
+            <v-card-subtitle>
+              <div class="text-caption text-grey">
+                <span v-if="user?.email">{{ user.email }}</span>
+                <span v-if="user?.age"> — {{ user.age }} ans</span>
+              </div>
+              <div class="text-body-2 text-grey" v-if="user?.description">
+                {{ user.description }}
+              </div>
+            </v-card-subtitle>
+            <v-card-text>
               <div>
-                <span class="font-weight-bold">Contact: </span>
-                <span v-if="user?.contact">{{ user.contact }}</span>
+                <span class="font-weight-bold text-white">Contact: </span>
+                <span v-if="user?.contact" class="text-white">{{ user.contact }}</span>
                 <span v-else class="text-grey">Non renseigné</span>
               </div>
               <div>
-                <span class="font-weight-bold">Sex: </span>
-                <span v-if="user?.sex">{{ user.sex }}</span>
+                <span class="font-weight-bold text-white">Sex: </span>
+                <span v-if="user?.sex" class="text-white">{{ user.sex }}</span>
                 <span v-else class="text-grey">Non renseigné</span>
               </div>
             </v-card-text>
@@ -51,32 +51,27 @@
         <v-col cols="12" md="6">
           <TrainingList :trainings="trainings" @trainingClick="goToTraining">
             <template #action v-if="canCreateForUser">
-              <v-btn
-                color="primary"
+              <PrimaryButton
                 @click="showCreateTraining = true"
                 class="ml-2"
                 elevation="1"
-                style="min-width: 0; width: 40px; height: 40px"
-                icon
+                prepend-icon="mdi-plus"
               >
-                <v-icon>mdi-plus</v-icon>
-              </v-btn>
+                Ajouter
+              </PrimaryButton>
             </template>
           </TrainingList>
         </v-col>
         <v-col cols="12" md="6">
           <DietList :diets="diets" @dietClick="goToDiet">
             <template #action v-if="canCreateForUser">
-              <v-btn
-                color="success"
+              <PrimaryButton
                 @click="showCreateDiet = true"
+                prepend-icon="mdi-plus"
                 class="ml-2"
-                elevation="1"
-                style="min-width: 0; width: 40px; height: 40px"
-                icon
               >
-                <v-icon>mdi-plus</v-icon>
-              </v-btn>
+                Ajouter
+              </PrimaryButton>
             </template>
           </DietList>
         </v-col>
@@ -212,7 +207,7 @@ async function createDiet({ name, description }) {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .profile-page {
   padding: 2rem;
 }

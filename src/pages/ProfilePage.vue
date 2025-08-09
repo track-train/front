@@ -3,55 +3,54 @@
     <v-row class="mb-6">
       <v-col cols="12">
         <v-card class="profile-header">
-          <v-card-text class="text-center py-8">
-            <div class="profile-photo-section">
-              <v-avatar
-                size="120"
-                class="profile-avatar mb-4"
-                :class="{ 'avatar-loading': fieldLoading.photo }"
-              >
-                <v-img
-                  :src="userProfile.photo || defaultAvatar"
-                  :alt="`Photo de ${userProfile.name}`"
-                  cover
-                />
-                <v-overlay
-                  v-if="fieldLoading.photo"
-                  contained
-                  class="d-flex align-center justify-center"
-                >
-                  <v-progress-circular indeterminate color="white" />
-                </v-overlay>
-              </v-avatar>
-
-              <div>
-                <v-btn
-                  color="primary"
-                  variant="outlined"
-                  prepend-icon="mdi-camera"
-                  @click="openPhotoDialog"
-                  :loading="fieldLoading.photo"
-                >
-                  Changer la photo
-                </v-btn>
-              </div>
-            </div>
-
-            <h1 class="text-h4 mt-4">{{ userProfile.name || 'Utilisateur' }}</h1>
-            <p class="text-h6 text-medium-emphasis">{{ userProfile.email }}</p>
-
-            <div class="roles-section mt-3">
-              <v-chip
-                v-for="role in userProfile.roles"
-                :key="role"
-                :color="getRoleColor(role)"
-                class="mx-1"
-                variant="flat"
-              >
-                <v-icon start>{{ getRoleIcon(role) }}</v-icon>
-                {{ role }}
-              </v-chip>
-            </div>
+          <v-card-text class="text-center py-4">
+            <v-row>
+              <v-col cols="12" class="d-flex">
+                <div class="d-flex flex-column align-center">
+                  <v-avatar
+                    size="120"
+                    class="profile-avatar mb-4"
+                    :class="{ 'avatar-loading': fieldLoading.photo }"
+                  >
+                      <v-img
+                        :src="userProfile.photo || defaultAvatar"
+                        :alt="`Photo de ${userProfile.name}`"
+                        cover
+                    />
+                    <v-overlay
+                      v-if="fieldLoading.photo"
+                      contained
+                      class="d-flex align-center justify-center"
+                    >
+                      <v-progress-circular indeterminate color="white" />
+                    </v-overlay>
+                  </v-avatar>
+                    <SecondaryButton
+                      prepend-icon="mdi-camera"
+                      @click="openPhotoDialog"
+                      :loading="fieldLoading.photo"
+                    >
+                      Changer la photo
+                    </SecondaryButton>
+                </div>
+                <v-spacer />
+                <div class="roles-section mt-3">
+                  <v-chip
+                    v-for="role in userProfile.roles"
+                    :key="role"
+                    :color="getRoleColor(role)"
+                    class="mx-1"
+                  >
+                    <v-icon start>{{ getRoleIcon(role) }}</v-icon>
+                    {{ role }}
+                  </v-chip>
+                </div>
+              </v-col>
+              <v-col cols="12" class="d-flex flex-column align-start">
+                <h1 class="text-h4">{{ userProfile.name || 'Utilisateur' }}</h1>
+                <p class="text-h6 text-white">{{ userProfile.email }}</p>
+              </v-col>
+            </v-row>
           </v-card-text>
         </v-card>
       </v-col>
@@ -73,7 +72,6 @@
                     <v-text-field
                       v-model="userProfile.email"
                       label="Email"
-                      variant="outlined"
                       :loading="fieldLoading.email"
                       :class="{ 'field-saving': fieldLoading.email }"
                       @blur="onFieldBlur('email')"
@@ -95,7 +93,6 @@
                     <v-text-field
                       v-model="userProfile.name"
                       label="Nom"
-                      variant="outlined"
                       :loading="fieldLoading.name"
                       :class="{ 'field-saving': fieldLoading.name }"
                       @blur="onFieldBlur('name')"
@@ -118,7 +115,6 @@
                       v-model="userProfile.sex"
                       :items="['Homme', 'Femme', 'Autre']"
                       label="Sexe"
-                      variant="outlined"
                       :loading="fieldLoading.sex"
                       :class="{ 'field-saving': fieldLoading.sex }"
                       @blur="onFieldBlur('sex')"
@@ -142,7 +138,6 @@
                       v-model.number="userProfile.age"
                       label="Âge"
                       type="number"
-                      variant="outlined"
                       :loading="fieldLoading.age"
                       :class="{ 'field-saving': fieldLoading.age }"
                       @blur="onFieldBlur('age')"
@@ -164,7 +159,6 @@
                     <v-text-field
                       v-model="userProfile.contact"
                       label="Contact"
-                      variant="outlined"
                       :loading="fieldLoading.contact"
                       :class="{ 'field-saving': fieldLoading.contact }"
                       @blur="onFieldBlur('contact')"
@@ -205,7 +199,6 @@
                       label="Tarif (€)"
                       type="number"
                       step="0.01"
-                      variant="outlined"
                       :loading="fieldLoading.pricing"
                       :class="{ 'field-saving': fieldLoading.pricing }"
                       @blur="onFieldBlur('pricing')"
@@ -227,7 +220,6 @@
                     <v-textarea
                       v-model="userProfile.description"
                       label="Description"
-                      variant="outlined"
                       rows="4"
                       :loading="fieldLoading.description"
                       :class="{ 'field-saving': fieldLoading.description }"
@@ -253,7 +245,6 @@
                     <v-textarea
                       v-model="userProfile.legacy"
                       label="Expérience / Legacy"
-                      variant="outlined"
                       rows="4"
                       :loading="fieldLoading.legacy"
                       :class="{ 'field-saving': fieldLoading.legacy }"
@@ -293,7 +284,6 @@
                       v-model="newPassword"
                       label="Nouveau mot de passe"
                       type="password"
-                      variant="outlined"
                       :loading="fieldLoading.password"
                       :class="{ 'field-saving': fieldLoading.password }"
                       placeholder="Entrer un nouveau mot de passe"
@@ -332,7 +322,6 @@
                   :model-value="userProfile.id"
                   label="ID du compte"
                   readonly
-                  variant="outlined"
                   prepend-inner-icon="mdi-identifier"
                 />
               </v-col>
@@ -342,7 +331,6 @@
                   :model-value="formatDate(userProfile.created_at)"
                   label="Membre depuis"
                   readonly
-                  variant="outlined"
                   prepend-inner-icon="mdi-calendar"
                 />
               </v-col>
@@ -353,15 +341,16 @@
     </v-row>
 
     <v-dialog v-model="photoDialog" max-width="500px">
-      <v-card>
-        <v-card-title>Changer la photo de profil</v-card-title>
+      <v-card class="photo-card">
+        <v-card-title class="text-white">Changer la photo de profil</v-card-title>
         <v-card-text>
           <v-file-input
             v-model="selectedPhoto"
             label="Sélectionner une photo"
             accept="image/*"
-            prepend-icon="mdi-camera"
+            prepend-inner-icon="mdi-camera"
             variant="outlined"
+            bg-color="white"
             @change="previewPhoto"
           />
 
@@ -373,15 +362,15 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn @click="photoDialog = false"> Annuler </v-btn>
-          <v-btn
-            color="primary"
+          <TertiaryButton @click="photoDialog = false"> Annuler </TertiaryButton>
+          <PrimaryButton
             @click="uploadPhoto"
             :loading="fieldLoading.photo"
             :disabled="!selectedPhoto?.length"
           >
+          >
             Sauvegarder
-          </v-btn>
+          </PrimaryButton>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -614,7 +603,7 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .profile-page {
   padding: 2rem;
   max-width: 1200px;
@@ -622,12 +611,8 @@ onMounted(() => {
 }
 
 .profile-header {
-  background: linear-gradient(135deg, #1976d2 0%, #42a5f5 100%);
+  background: linear-gradient(180deg, rgba(0, 188, 167, 0.15) 0%, rgba(0, 35, 31, 0.3) 100%);
   color: white;
-}
-
-.profile-photo-section {
-  position: relative;
 }
 
 .profile-avatar {
@@ -689,5 +674,9 @@ onMounted(() => {
   .profile-page {
     padding: 1rem;
   }
+}
+
+.photo-card {
+  background-color: #00231f !important;
 }
 </style>

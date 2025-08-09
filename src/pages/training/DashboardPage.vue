@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1>Bienvenue {{ authStore.user?.name || 'Utilisateur' }}</h1>
-    <v-btn color="error" @click="authStore.logout()">Déconnexion</v-btn>
+    <DeleteButton  @click="authStore.logout()">Déconnexion</DeleteButton>
   </v-container>
 </template>
 
