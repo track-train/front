@@ -1,15 +1,21 @@
 <template>
-  <VContainer fluid class="pa-14" style="height: 100vh">
-    <RouterView />
-    <AppSnackbar />
-  </VContainer>
+  <v-app>
+    <TrackAndTrainAppBar />
+    <v-container fluid class="container pa-14">
+      <TrainingNavbar v-if="authStore.isAuthenticated" />
+      <RouterView />
+      <AppSnackbar />
+    </v-container>
+  </v-app>
 </template>
 
 <script setup>
 import { RouterView } from 'vue-router'
 import AppSnackbar from './components/AppSnackbar.vue'
+import TrainingNavbar from './components/TrainingNavbar.vue'
 import { useAuthStore } from './stores/auth'
 import { onMounted } from 'vue'
+import TrackAndTrainAppBar from './components/TrackAndTrainAppBar.vue'
 
 const authStore = useAuthStore()
 
@@ -18,4 +24,9 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.container {
+  height: 100vh;
+  background-color: #00231f;
+}
+</style>

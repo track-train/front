@@ -1,5 +1,5 @@
 <template>
-  <v-container class="training-detail-page">
+  <v-container fluid class="training-detail-page">
     <div v-if="trainingStore.currentTraining" class="training-header mb-6">
       <v-card elevation="2">
         <v-card-title class="d-flex align-center">
@@ -8,12 +8,12 @@
           </v-btn>
           <div>
             <h1 class="text-h4">{{ trainingStore.currentTraining.name }}</h1>
-            <p class="text-body-1 text-grey mb-0">
+            <p class="text-body-1 text-black mb-0">
               {{ trainingStore.currentTraining.description }}
             </p>
           </div>
           <v-spacer />
-          <v-chip color="primary"> {{ trainingStore.tasks.length }} exercice(s) </v-chip>
+          <v-chip color="black"> {{ trainingStore.tasks.length }} exercice(s) </v-chip>
         </v-card-title>
       </v-card>
     </div>
@@ -36,11 +36,15 @@
       {{ trainingStore.error }}
     </v-alert>
 
-    <v-card v-if="!trainingStore.loading.training && !trainingStore.loading.tasks" elevation="2">
-      <v-card-title class="d-flex align-center">
-        <v-icon class="mr-2" color="primary">mdi-format-list-checks</v-icon>
-        <span class="text-h6">Exercices du training</span>
-      </v-card-title>
+    <div v-if="!trainingStore.loading.training && !trainingStore.loading.tasks" elevation="2">
+      <h6 class="d-flex align-center mb-4">
+        <v-icon class="mr-2" size="25" color="white">mdi-format-list-checks</v-icon>
+        <span class="text-h6 text-white">Exercices du training</span>
+        <v-spacer />
+        <PrimaryButton v-if="canCreateTask" prepend-icon="mdi-plus" @click="showCreateTask = true">
+          Ajouter
+        </PrimaryButton>
+      </h6>
 
       <v-data-table
         :headers="headers"
@@ -53,57 +57,55 @@
         show-expand
         @update:expanded="handleExpandedChange"
       >
-        <template #item.exercise_name="{ item }">
+        <template #[`item.exercise_name`]="{ item }">
           <div class="d-flex align-center">
-            <v-icon class="mr-2" color="primary">mdi-dumbbell</v-icon>
+            <v-icon class="mr-2" color="white">mdi-dumbbell</v-icon>
             <strong>{{ item.exercise_name }}</strong>
           </div>
         </template>
 
-        <template v-slot:item.sets_reps="{ item }">
+        <template #[`item.sets_reps`]="{ item }">
           <v-chip color="info" small> {{ item.set_number }} x {{ item.repetitions }} </v-chip>
         </template>
 
-        <template v-slot:item.rest_time="{ item }"> {{ item.rest_time }}min </template>
+        <template #[`item.rest_time`]="{ item }"> {{ item.rest_time }}min </template>
 
-        <template v-slot:item.method="{ item }">
-          <v-chip color="success" small outlined>
+        <template #[`item.method`]="{ item }">
+          <v-chip color="#22c55e" small outlined>
             {{ item.method }}
           </v-chip>
         </template>
 
-        <template v-slot:item.rir="{ item }">
-          <v-chip color="warning" small> RIR {{ item.rir }} </v-chip>
+        <template #[`item.rir`]="{ item }">
+          <v-chip color="#f97316" small> RIR {{ item.rir }} </v-chip>
         </template>
 
-        <template v-slot:item.validations_count="{ item }">
-          <v-chip :color="item.validations_count > 0 ? 'success' : 'grey'" small>
+        <template #[`item.validations_count`]="{ item }">
+          <v-chip :color="item.validations_count > 0 ? '#22c55e' : 'grey'" small>
             {{ item.validations_count }} validation(s)
           </v-chip>
         </template>
 
-        <template v-slot:item.actions="{ item }">
-          <v-btn
+        <template #[`item.actions`]="{ item }">
+          <SecondaryButton
             v-if="!canCreateTask"
-            color="primary"
             size="small"
             @click="openValidationDialog(item)"
             :loading="trainingStore.loading.creating"
           >
             <v-icon small class="mr-1">mdi-plus</v-icon>
             Valider
-          </v-btn>
+          </SecondaryButton>
 
-          <v-btn
+          <DeleteButton
             v-if="canCreateTask"
-            color="error"
             size="small"
+            prepend-icon="mdi-delete"
             @click="openDeleteTaskDialog(item)"
             :loading="deletingTaskId === item.id"
           >
-            <v-icon small class="mr-1">mdi-delete</v-icon>
             Supprimer
-          </v-btn>
+          </DeleteButton>
         </template>
 
         <template #expanded-row="{ columns, item }">
@@ -122,7 +124,7 @@
           </tr>
         </template>
       </v-data-table>
-    </v-card>
+    </div>
 
     <ValidationDialog
       v-model="validationDialog"
@@ -130,8 +132,6 @@
       :training-id="trainingId"
       @validation-created="onValidationCreated"
     />
-
-    <FloatingActionButton v-if="canCreateTask" icon="mdi-plus" @click="showCreateTask = true" />
 
     <TaskCreateDialog v-model="showCreateTask" @created="createTask" />
 
@@ -152,7 +152,6 @@ import { useAuthStore } from '@/stores/auth'
 import { useContextualStore } from '@/stores/contextual'
 import { useSnackbarStore } from '@/stores/snackbar'
 import api from '@/plugins/axios'
-import FloatingActionButton from '@/components/FloatingActionButton.vue'
 import TaskCreateDialog from '@/components/TaskCreateDialog.vue'
 import ValidationDialog from '@/components/ValidationDialog.vue'
 import ValidationsList from '@/components/ValidationsList.vue'
@@ -288,19 +287,27 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .training-detail-page {
   max-width: 1200px;
 }
 
 .training-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #22c55e 0%, #2dd4bf 100%);
   border-radius: 12px;
   color: white;
 }
 
 .tasks-table {
   border-radius: 8px;
+  background-color: color-mix(in srgb, #00231F, white 10%);
+  border: 1px solid color-mix(in srgb, #00231F, white 20%);
+  color: white;
+  :deep(.v-table__wrapper){
+    thead {
+      padding: 0.75rem 1rem;
+    }
+  }
 }
 
 :deep(.v-data-table-row:hover) {

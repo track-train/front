@@ -26,7 +26,7 @@
                   <v-icon :color="getMealTypeColor(meal.type)" size="24" class="mb-2">
                     {{ getMealTypeIcon(meal.type) }}
                   </v-icon>
-                  <h5 class="text-subtitle-2">{{ meal.type }}</h5>
+                  <h5 class="text-subtitle-2 text-white">{{ meal.type }}</h5>
                   <p class="text-body-2 text-grey mb-0">{{ meal.calories || 0 }} kcal</p>
                 </v-card-body>
               </v-card>
@@ -36,10 +36,10 @@
 
         <!-- Actions -->
         <div class="text-center">
-          <v-btn color="success" outlined @click="goToAllMeals" class="mr-2">
+          <SecondaryButton outlined @click="goToAllMeals" class="mr-2">
             Voir tous mes repas
-          </v-btn>
-          <v-btn color="primary" @click="goToMealPlanning"> Planifier </v-btn>
+          </SecondaryButton>
+          <PrimaryButton @click="goToMealPlanning"> Planifier </PrimaryButton>
         </div>
       </div>
     </v-card-text>
@@ -94,7 +94,7 @@ const getMealTypeColor = (type) => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .user-meals-card {
   min-height: 200px;
 }

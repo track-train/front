@@ -1,7 +1,7 @@
 <template>
-  <v-card class="user-coach-card mb-4" elevation="2">
+  <v-card class="user-coach-card mb-4 fill-height" elevation="2">
     <v-card-title class="d-flex align-center">
-      <v-icon class="mr-2" color="primary">mdi-account-tie</v-icon>
+      <v-icon class="mr-2" color="#eab308">mdi-account-tie</v-icon>
       <span class="text-h6">Mon Coach</span>
     </v-card-title>
 
@@ -10,7 +10,7 @@
         <v-icon size="48" color="grey lighten-2">mdi-account-question</v-icon>
         <p class="text-body-1 mt-2 text-grey">Aucun coach assigné</p>
         <p class="text-body-2 text-grey">Trouvez un coach pour commencer votre parcours</p>
-        <v-btn color="primary" class="mt-2" @click="goToCoaches"> Trouver un coach </v-btn>
+        <PrimaryButton class="mt-2" @click="goToCoaches"> Trouver un coach </PrimaryButton>
       </div>
 
       <div v-else class="d-flex align-center">
@@ -26,15 +26,13 @@
         </div>
 
         <div class="coach-actions">
-          <v-btn color="primary" small @click="contactCoach" class="mb-2">
-            <v-icon small class="mr-1">mdi-message</v-icon>
+          <SecondaryButton prepend-icon="mdi-message" @click="contactCoach" class="mb-2">
             Contacter
-          </v-btn>
+          </SecondaryButton>
           <br />
-          <v-btn color="info" small outlined @click="viewCoachProfile">
-            <v-icon small class="mr-1">mdi-account-details</v-icon>
+          <PrimaryButton prepend-icon="mdi-account-details" @click="viewCoachProfile" class="mb-2">
             Profil
-          </v-btn>
+          </PrimaryButton>
         </div>
       </div>
     </v-card-text>
@@ -70,7 +68,7 @@ const viewCoachProfile = () => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .user-coach-card {
   min-height: 140px;
 }

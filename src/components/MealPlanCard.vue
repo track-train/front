@@ -30,7 +30,7 @@
           :class="{ 'last-meal': index === sortedMeals.length - 1 }"
         >
           <div class="meal-timing">
-            <v-chip color="success" size="small" variant="outlined" class="timing-chip">
+            <v-chip color="success" size="small"  class="timing-chip">
               <v-icon small class="mr-1">mdi-clock</v-icon>
               {{ formatTiming(meal.timing) }}
             </v-chip>
@@ -38,7 +38,6 @@
 
           <div class="meal-content">
             <v-card
-              variant="outlined"
               class="food-card"
               :class="{ highlighted: isMainMeal(meal.timing) }"
             >
@@ -135,7 +134,7 @@ const getMealIcon = (timing) => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .meal-plan-card {
   border-radius: 12px;
   transition: all 0.3s ease;

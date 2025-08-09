@@ -15,7 +15,7 @@ export const useAuthStore = defineStore('auth', {
     hasRole: (state) => (role) => {
       if (!state.user?.roles) return false
       if (Array.isArray(role)) {
-        return state.user.roles.some(r => role.includes(r))
+        return state.user.roles.some((r) => role.includes(r))
       }
       return state.user.roles.includes(role)
     },

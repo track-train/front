@@ -3,7 +3,7 @@
     <v-card-text>
       <div class="user-header">
         <div class="user-info">
-          <h3>{{ user.name }}</h3>
+          <h3 class="text-white">{{ user.name }}</h3>
           <p class="user-email">{{ user.email }}</p>
         </div>
 
@@ -14,7 +14,6 @@
             :key="role"
             :color="getRoleColor(role)"
             size="small"
-            variant="flat"
           >
             {{ role }}
           </v-chip>
@@ -23,18 +22,18 @@
 
       <div class="user-meta">
         <div class="meta-item">
-          <v-icon size="small">mdi-calendar</v-icon>
-          <span>{{ formatDate(user.created_at) }}</span>
+          <v-icon size="small" color="white">mdi-calendar</v-icon>
+          <span class="text-white">{{ formatDate(user.created_at) }}</span>
         </div>
 
         <div class="meta-item" v-if="user.sex">
-          <v-icon size="small">mdi-human</v-icon>
-          <span>{{ user.sex }}</span>
+          <v-icon size="small" color="white">mdi-human</v-icon>
+          <span class="text-white">{{ user.sex }}</span>
         </div>
 
         <div class="meta-item" v-if="user.age">
-          <v-icon size="small">mdi-cake</v-icon>
-          <span>{{ user.age }} ans</span>
+          <v-icon size="small" color="white">mdi-cake</v-icon>
+          <span class="text-white">{{ user.age }} ans</span>
         </div>
       </div>
     </v-card-text>
@@ -53,9 +52,9 @@ defineEmits(['click'])
 
 const getRoleColor = (role) => {
   const colors = {
-    admin: 'red',
-    coach: 'blue',
-    user: 'green',
+    admin: '#920002',
+    coach: '#2dd4bf',
+    user: '#22c55e',
   }
   return colors[role] || 'grey'
 }
@@ -65,7 +64,7 @@ const formatDate = (dateString) => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .user-card {
   cursor: pointer;
   transition: transform 0.2s;
@@ -88,7 +87,7 @@ const formatDate = (dateString) => {
 }
 
 .user-email {
-  color: #666;
+  color: color-mix(in srgb, #00231F,white 60%);
   font-size: 0.9rem;
   margin: 0.25rem 0 0 0;
 }

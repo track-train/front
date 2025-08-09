@@ -1,8 +1,8 @@
 <template>
   <v-dialog v-model="show" max-width="800" persistent>
-    <v-card>
+    <v-card class="diet-plan-dialog">
       <v-card-title class="d-flex align-center">
-        <v-icon class="mr-2" color="success">mdi-nutrition</v-icon>
+        <v-icon class="mr-2" color="#22c55e">mdi-nutrition</v-icon>
         <span class="text-h6">Créer un nouveau plan</span>
       </v-card-title>
 
@@ -13,7 +13,7 @@
           :items="planTypes"
           item-title="text"
           item-value="value"
-          variant="outlined"
+
           class="mb-4"
         >
           <template #prepend-inner>
@@ -24,12 +24,11 @@
         <v-text-field
           v-model="planName"
           label="Nom du plan"
-          variant="outlined"
           required
           class="mb-4"
         />
 
-        <v-card v-if="planType === PLAN_TYPE_MACRO" variant="outlined" class="pa-4">
+        <v-card v-if="planType === PLAN_TYPE_MACRO" class="pa-4">
           <v-card-title class="pa-0 mb-3">
             <span class="text-subtitle-1">Exemple pour macroplan</span>
           </v-card-title>
@@ -40,7 +39,6 @@
                 v-model.number="macroForm.protein"
                 label="Protéine"
                 type="number"
-                variant="outlined"
                 suffix="g"
               />
             </v-col>
@@ -49,7 +47,6 @@
                 v-model.number="macroForm.lipids"
                 label="Lipide"
                 type="number"
-                variant="outlined"
                 suffix="g"
               />
             </v-col>
@@ -58,7 +55,6 @@
                 v-model.number="macroForm.carbohydrates"
                 label="Glucide"
                 type="number"
-                variant="outlined"
                 suffix="g"
               />
             </v-col>
@@ -67,7 +63,6 @@
                 v-model.number="macroForm.fiber"
                 label="Fibre"
                 type="number"
-                variant="outlined"
                 suffix="g"
               />
             </v-col>
@@ -76,7 +71,6 @@
                 v-model.number="macroForm.water"
                 label="Eau"
                 type="number"
-                variant="outlined"
                 suffix="L"
               />
             </v-col>
@@ -85,7 +79,6 @@
                 v-model.number="macroForm.kilocalorie"
                 label="Total kcal"
                 type="number"
-                variant="outlined"
                 suffix="kcal"
               />
             </v-col>
@@ -94,7 +87,7 @@
 
         <v-card
           v-if="planType === PLAN_TYPE_MEAL"
-          variant="outlined"
+
           class="pa-4"
           style="position: relative"
         >
@@ -111,23 +104,22 @@
             >
               <div class="d-flex justify-space-between align-center mb-2">
                 <span class="text-subtitle-2">Repas {{ index + 1 }}</span>
-                <v-btn
+                <DeleteButton
                   v-if="mealForm.meals.length > 1"
-                  icon
+                  prepend-icon="mdi-close"
                   size="small"
-                  color="error"
                   @click="removeMeal(index)"
                 >
-                  <v-icon size="small">mdi-close</v-icon>
-                </v-btn>
+                  Supprimer
+                </DeleteButton>
               </div>
 
               <v-row>
-                <v-col cols="4">
+                <v-col cols="12">
                   <v-text-field
                     v-model="meal.timing"
                     label="Heure"
-                    variant="outlined"
+
                     placeholder="12:30"
                     @click="openTimePicker(index)"
                     readonly
@@ -137,11 +129,10 @@
                     </template>
                   </v-text-field>
                 </v-col>
-                <v-col cols="8">
+                <v-col cols="12">
                   <v-textarea
                     v-model="meal.food"
                     label="Repas"
-                    variant="outlined"
                     rows="2"
                     placeholder="200g skyr 100g fruits rouges 2 oeufs"
                     auto-grow
@@ -150,38 +141,37 @@
               </v-row>
             </div>
           </div>
-
-          <v-btn
-            color="success"
-            icon
+          <VSpacer />
+          <PrimaryButton
+            prepend-icon="mdi-plus"
             size="small"
-            style="position: absolute; bottom: 16px; right: 16px; z-index: 1"
+            class="mt-2"
             @click="addMeal"
           >
-            <v-icon>mdi-plus</v-icon>
-          </v-btn>
+            Ajout
+          </PrimaryButton>
         </v-card>
       </v-card-text>
 
       <v-card-actions>
         <v-spacer />
-        <v-btn text @click="close">Annuler</v-btn>
-        <v-btn color="success" :loading="loading" @click="submit" :disabled="!canSubmit">
+        <TertiaryButton @click="close">Annuler</TertiaryButton>
+        <PrimaryButton :loading="loading" @click="submit" :disabled="!canSubmit">
           Créer
-        </v-btn>
+        </PrimaryButton>
       </v-card-actions>
     </v-card>
 
-    <v-dialog v-model="timePickerDialog" max-width="300px">
-      <v-card>
+    <v-dialog v-model="timePickerDialog" max-width="500px">
+      <v-card class="diet-plan-dialog">
         <v-card-title>Sélectionner l'heure</v-card-title>
         <v-card-text>
-          <v-time-picker v-model="selectedTime" format="24hr" scrollable />
+          <v-time-picker v-model="selectedTime" title="Sélectionner une heure" format="24hr" scrollable />
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn text @click="timePickerDialog = false">Annuler</v-btn>
-          <v-btn color="primary" @click="confirmTime">Confirmer</v-btn>
+          <TertiaryButton @click="timePickerDialog = false">Annuler</TertiaryButton>
+          <PrimaryButton @click="confirmTime">Confirmer</PrimaryButton>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -335,12 +325,16 @@ const submit = async () => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .meal-item {
   background-color: #fafafa;
 }
 
 :deep(.v-time-picker) {
   width: 100%;
+}
+
+.diet-plan-dialog {
+  background-color: #00231f !important;
 }
 </style>

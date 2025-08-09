@@ -1,53 +1,48 @@
 <template>
-  <VRow class="w-100 h-100">
-    <VCol cols="12" class="d-flex justify-center align-center">
-      <VCard width="400" class="card-glass pa-3">
-        <VCardTitle>Créer un compte</VCardTitle>
-        <VCardText>
-          <VRow>
-            <VCol cols="12">
-              <VTextField
+  <v-row class="w-100 h-100">
+    <v-col cols="12" class="d-flex justify-center align-center">
+      <v-card width="400" class="card-glass pa-3">
+        <v-card-title>Créer un compte</v-card-title>
+        <v-card-text>
+          <v-row>
+            <v-col cols="12">
+              <v-text-field
                 v-model="email"
                 label="Email"
                 type="email"
-                bg-color="#ffffff1a"
                 rounded="0.5rem"
               />
-            </VCol>
-            <VCol cols="12">
-              <VTextField
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
                 v-model="password"
                 label="Mot de passe"
                 type="password"
-                rounded="0.5rem"
-                bg-color="#ffffff1a"
               />
-            </VCol>
-            <VCol cols="12">
-              <VTextField
+            </v-col>
+            <v-col cols="12">
+              <v-text-field
                 v-model="confirmPassword"
                 label="Confirmer le mot de passe"
                 type="password"
-                rounded="0.5rem"
-                bg-color="#ffffff1a"
               />
-            </VCol>
-            <VCol cols="12">
+            </v-col>
+            <v-col cols="12">
               <span class="register-class mt-3"
                 >Déjà inscrit ? <RouterLink to="/">Se connecter</RouterLink></span
               >
-            </VCol>
-          </VRow>
-        </VCardText>
-        <VCardActions>
-          <VSpacer />
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
           <PrimaryButton @click="handleLogin" :loading="authStore.loading">
             Se créer un compte
           </PrimaryButton>
-        </VCardActions>
-      </VCard>
-    </VCol>
-  </VRow>
+        </v-card-actions>
+      </v-card>
+    </v-col>
+  </v-row>
 </template>
 
 <script setup>

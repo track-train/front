@@ -1,13 +1,13 @@
 <template>
-  <v-card class="coach-card" elevation="2" hover>
-    <v-card-title class="text-h6">
+  <v-card class="coach-card" hover>
+    <v-card-title>
       {{ name }}
     </v-card-title>
     <v-card-text>
       <p class="text-body-2">{{ description }}</p>
     </v-card-text>
     <v-card-actions>
-      <v-btn color="primary" @click="selectCoach"> Choisir ce coach </v-btn>
+      <PrimaryButton  @click="selectCoach"> Choisir ce coach </PrimaryButton>
     </v-card-actions>
   </v-card>
 </template>
@@ -39,7 +39,7 @@ const selectCoach = () => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .coach-card {
   min-width: 300px;
   max-width: 400px;

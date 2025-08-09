@@ -4,12 +4,12 @@
       <v-btn icon @click="router.back()"><v-icon>mdi-arrow-left</v-icon></v-btn>
       <h1 class="text-h5 ml-2">Membres du groupe</h1>
     </div>
-    <v-tabs v-model="activeTab" color="primary" class="mb-4">
-      <v-tab value="members">
+    <v-tabs v-model="activeTab" color="#f97316" class="mb-4">
+      <v-tab value="members" base-color="white">
         <v-icon left>mdi-account-multiple</v-icon>
         Suivis ({{ groupMembers.length }})
       </v-tab>
-      <v-tab value="users">
+      <v-tab value="users" base-color="white">
         <v-icon left>mdi-account-plus</v-icon>
         Utilisateurs ({{ filteredAllUsers.length }})
       </v-tab>
@@ -19,7 +19,7 @@
         <v-text-field
           v-model="filter"
           label="Filtrer les membres"
-          prepend-icon="mdi-magnify"
+          prepend-inner-icon="mdi-magnify"
           class="mb-4"
           clearable
         />
@@ -34,11 +34,15 @@
               <v-list-item-title>{{ user.name }}</v-list-item-title>
             </v-list-item-content>
             <v-list-item-action class="d-flex gap-2">
-              <v-btn color="primary" size="small" @click="viewProfile(user.id)">
+              <PrimaryButton
+                prepend-icon="mdi-account-arrow-right"
+                size="small"
+                @click="viewProfile(user.id)"
+              >
                 Voir profil
-                <v-icon right size="small">mdi-account-arrow-right</v-icon>
-              </v-btn>
-              <v-btn
+                <v-icon right size="small"></v-icon>
+              </PrimaryButton>
+              <DeleteButton
                 color="error"
                 size="small"
                 :loading="loadingRemoveUser[user.id]"
@@ -46,7 +50,7 @@
               >
                 <v-icon left size="small">mdi-minus</v-icon>
                 Retirer
-              </v-btn>
+              </DeleteButton>
             </v-list-item-action>
           </v-list-item>
           <v-list-item v-if="loadingMembers">
@@ -74,20 +78,19 @@
         >
           <v-list-item v-for="user in filteredAllUsers" :key="user.id" class="member-list-item">
             <v-list-item-content>
-              <v-list-item-title>{{ user.name }}</v-list-item-title>
+              <v-list-item-title> {{ user.name }}</v-list-item-title>
               <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
-              <v-btn
-                color="success"
+              <PrimaryButton
                 size="small"
+                prepend-icon="mdi-plus"
                 :disabled="isUserInGroup(user.id) || loadingAddUser[user.id]"
                 :loading="loadingAddUser[user.id]"
                 @click="addUserToGroup(user.id)"
               >
-                <v-icon left size="small">mdi-plus</v-icon>
                 Ajouter
-              </v-btn>
+              </PrimaryButton>
             </v-list-item-action>
           </v-list-item>
           <v-list-item v-if="loadingUsers">
@@ -114,14 +117,14 @@
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn text @click="removeUserDialog = false">Annuler</v-btn>
-          <v-btn
+          <TertiaryButton @click="removeUserDialog = false">Annuler</TertiaryButton>
+          <DeleteButton
             color="error"
             :loading="loadingRemoveUser[selectedUserToRemove?.id]"
             @click="confirmRemoveUser"
           >
             Retirer
-          </v-btn>
+          </DeleteButton>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -175,7 +178,7 @@ async function fetchMembers(pageNum) {
     } else {
       allLoadedMembers.value = true
     }
-  } catch (e) {
+  } catch (e__) {
     errorMembers.value = 'Erreur lors du chargement des membres.'
   } finally {
     loadingMembers.value = false
@@ -303,17 +306,25 @@ onMounted(() => {
 })
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .member-list-item {
   border-bottom: 1px solid #eee;
+  padding-bottom: 8px;
 }
 
 .member-list {
   max-height: 600px;
   overflow-y: auto;
+  background-color: #ffffff1a;
+  border-radius: 7px;
+  padding-inline: 8px;
 }
 
 .d-flex.gap-2 {
   gap: 8px;
+}
+
+.v-list-item-title {
+  color: #fff;
 }
 </style>

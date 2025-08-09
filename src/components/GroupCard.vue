@@ -1,21 +1,20 @@
 <template>
-  <v-card class="group-card" elevation="3">
+  <v-card elevation="3">
     <v-card-title class="group-card-title d-flex align-center justify-space-between">
       <div class="text-h6 font-weight-bold">{{ group.name }}</div>
-      <v-btn icon color="error" size="small" @click.stop="confirmDelete">
-        <v-icon>mdi-delete</v-icon>
-      </v-btn>
+      <DeleteButton prepend-icon="mdi-delete" size="small" @click.stop="confirmDelete">
+        Supprimer
+      </DeleteButton>
     </v-card-title>
-    <v-divider />
     <v-card-text class="pb-2">
-      <span class="text-body-2">{{ group.description }}</span>
+      <span class="text-body-2 text-white">{{ group.description }}</span>
     </v-card-text>
     <v-card-actions class="justify-space-between pt-0">
       <span class="text-caption text-grey">{{ formatDate(group.created_at) }}</span>
-      <v-btn color="primary" variant="tonal" size="small" @click="seeMembers">
+      <SecondaryButton size="small" @click="seeMembers">
         Voir groupe
         <v-icon right size="small">mdi-chevron-right</v-icon>
-      </v-btn>
+      </SecondaryButton>
     </v-card-actions>
     <DeleteConfirmationDialog
       v-model="deleteDialog"
@@ -69,18 +68,3 @@ async function deleteGroup() {
   }
 }
 </script>
-
-<style scoped>
-.group-card {
-  border-radius: 14px;
-  min-height: 160px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-}
-.group-card-title {
-  text-align: center;
-  background: #f5f5f5;
-  border-radius: 14px 14px 0 0;
-}
-</style>
