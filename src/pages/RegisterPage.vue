@@ -6,19 +6,10 @@
         <v-card-text>
           <v-row>
             <v-col cols="12">
-              <v-text-field
-                v-model="email"
-                label="Email"
-                type="email"
-                rounded="0.5rem"
-              />
+              <v-text-field v-model="email" label="Email" type="email" rounded="0.5rem" />
             </v-col>
             <v-col cols="12">
-              <v-text-field
-                v-model="password"
-                label="Mot de passe"
-                type="password"
-              />
+              <v-text-field v-model="password" label="Mot de passe" type="password" />
             </v-col>
             <v-col cols="12">
               <v-text-field
@@ -71,8 +62,23 @@ const handleLogin = async () => {
       router.push('/login')
     })
     .catch((error) => {
+      let errorMessage = ''
       console.error('Error creating account:', error)
-      snackbarStore.error(error.response?.data?.message || 'Erreur lors de la création du compte')
+      if (error.response?.status === 400) {
+        if (
+          error.response.data?.detail.includes('email') ||
+          error.response.data?.detail.includes('Email')
+        ) {
+          errorMessage = "Le format de l'email est invalide."
+        } else {
+          errorMessage = 'Mot de passe et confirmation ne correspondent pas.'
+        }
+      } else if (error.response?.status === 409) {
+        errorMessage = 'Un compte avec cet email existe déjà.'
+      } else {
+        errorMessage = 'Erreur lors de la création du compte. Veuillez réessayer.'
+      }
+      snackbarStore.error(errorMessage)
     })
 }
 </script>

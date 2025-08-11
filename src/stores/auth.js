@@ -51,6 +51,8 @@ export const useAuthStore = defineStore('auth', {
         console.error('Erreur de connexion', err)
         if (err.response?.status === 401) {
           this.error = 'Identifiants incorrects. Veuillez réessayer.'
+        } else if (err.response?.status === 400) {
+          this.error = "Le format de l'email est invalide."
         } else {
           this.error = 'Une erreur est survenue lors de la connexion. Veuillez réessayer.'
         }
