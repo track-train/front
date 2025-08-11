@@ -129,13 +129,11 @@ const userAvatar = computed(() => {
 
 // Méthodes
 const toggleAvatarMenu = () => {
-  console.log('Toggle avatar menu')
   avatarMenu.value = true
-  console.log('Avatar menu state:', !avatarMenu.value)
 }
 
 const handleNotifications = () => {
-  console.log('Ouvrir les notifications')
+  console.info('Ouvrir les notifications')
 }
 
 const goToProfile = () => {
