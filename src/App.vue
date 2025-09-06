@@ -2,7 +2,6 @@
   <v-app>
     <TrackAndTrainAppBar />
     <v-container fluid class="container">
-      <!-- Ajout d'un wrapper avec padding seulement pour certaines pages -->
       <div class="content-wrapper" :class="{ 'with-padding': needsPadding }">
         <TrainingNavbar v-if="authStore.isAuthenticated" />
         <RouterView />
