@@ -25,6 +25,46 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/feedback',
+    name: 'feedback',
+    component: () => import('@/pages/footer/FeedBackPage.vue'),
+  },
+  {
+    path: '/about-us',
+    name: 'about-us',
+    component: () => import('@/pages/footer/AboutPage.vue'),
+  },
+  {
+    path: '/become-coach',
+    name: 'become-coach',
+    component: () => import('@/pages/footer/BecomeCoachPage.vue'),
+  },
+  {
+    path: '/cgu',
+    name: 'cgu',
+    component: () => import('@/pages/footer/CGUPage.vue'),
+  },
+  {
+    path: '/features',
+    name: 'features',
+    component: () => import('@/pages/footer/FeaturesPage.vue'),
+  },
+  {
+    path: '/privacy',
+    name: 'privacy',
+    component: () => import('@/pages/footer/PrivacyPage.vue'),
+  },
+  {
+    path: '/legal',
+    name: 'legal',
+    component: () => import('@/pages/footer/LegalPage.vue'),
+  },
+  {
+    path: '/cookies',
+    name: 'cookies',
+    component: () => import('@/pages/footer/CookiesPage.vue'),
+  },
+  {
     path: '/admin',
     name: 'adminPanel',
     component: () => import('@/pages/training/AdminPanelPage.vue'),
