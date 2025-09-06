@@ -95,6 +95,7 @@ const handleItemClick = (item) => {
         handleCoachSearch()
         break
       case 'Diététique':
+
         console.info('Fonctionnalité diététique à implémenter')
         break
       case 'Calendrier':
