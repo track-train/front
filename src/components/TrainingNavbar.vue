@@ -37,22 +37,6 @@ const allMenuItems = ref([
     roles: ['user', 'coach', 'admin'],
     requiresAuth: true,
   },
-  // {
-  //   title: 'Statistiques',
-  //   icon: 'mdi-chart-bar',
-  //   hasSubmenu: false,
-  //   route: null, // Pas encore de route spécifique
-  //   roles: ['user', 'coach', 'admin'],
-  //   requiresAuth: true,
-  // },
-  // {
-  //   title: 'Recherche de coach',
-  //   icon: 'mdi-account-plus',
-  //   hasSubmenu: true,
-  //   route: null, // Action spéciale pour recherche
-  //   roles: ['user'],
-  //   requiresAuth: true,
-  // },
   {
     title: 'Groupes',
     icon: 'mdi-account-group',
@@ -69,50 +53,21 @@ const allMenuItems = ref([
     roles: ['admin'],
     requiresAuth: true,
   },
-
-  // {
-  //   title: 'Messagerie',
-  //   icon: 'mdi-message-text',
-  //   hasSubmenu: false,
-  //   route: null, // Pas encore de route spécifique
-  //   roles: ['user', 'coach', 'admin'],
-  //   requiresAuth: true,
-  // },
-  // {
-  //   title: 'Support',
-  //   icon: 'mdi-help-circle',
-  //   hasSubmenu: false,
-  //   route: null, // Pas encore de route spécifique
-  //   roles: ['user', 'coach', 'admin'],
-  //   requiresAuth: true,
-  // },
-  // {
-  //   title: 'Paramètres',
-  //   icon: 'mdi-cog',
-  //   hasSubmenu: false,
-  //   route: 'profile',
-  //   roles: ['user', 'coach', 'admin'],
-  //   requiresAuth: true,
-  // },
 ])
 
-// Filtrer les éléments du menu selon le rôle de l'utilisateur
 const filteredMenuItems = computed(() => {
   if (!authStore.isAuthenticated) {
     return []
   }
 
   return allMenuItems.value.filter((item) => {
-    // Vérifier si l'utilisateur a au moins un des rôles requis
     return authStore.hasRole(item.roles)
   })
 })
 
-// Vérifier si la route est active
 const isActiveRoute = (item) => {
   if (!item.route) return false
 
-  // Pour GroupsCoach, on vérifie aussi les routes liées aux groupes
   if (item.route === 'GroupsCoach') {
     return (
       route.name === 'GroupsCoach' ||
@@ -124,7 +79,6 @@ const isActiveRoute = (item) => {
   return route.name === item.route
 }
 
-// Gérer les clics sur les éléments du menu
 const handleItemClick = (item) => {
   if (item.route) {
     if (item.route === 'GroupsCoach') {
@@ -136,46 +90,36 @@ const handleItemClick = (item) => {
       router.push({ name: item.route })
     }
   } else {
-    // Actions spéciales pour les éléments sans route
     switch (item.title) {
       case 'Recherche de coach':
         handleCoachSearch()
         break
       case 'Diététique':
-        // Logique pour la diététique
-        console.log('Fonctionnalité diététique à implémenter')
+        console.info('Fonctionnalité diététique à implémenter')
         break
       case 'Calendrier':
-        // Logique pour le calendrier
-        console.log('Fonctionnalité calendrier à implémenter')
+        console.info('Fonctionnalité calendrier à implémenter')
         break
       case 'Statistiques':
-        // Logique pour les statistiques
-        console.log('Fonctionnalité statistiques à implémenter')
+        console.info('Fonctionnalité statistiques à implémenter')
         break
       case 'Messagerie':
-        // Logique pour la messagerie
-        console.log('Fonctionnalité messagerie à implémenter')
+        console.info('Fonctionnalité messagerie à implémenter')
         break
       case 'Support':
-        // Logique pour le support
-        console.log('Fonctionnalité support à implémenter')
+        console.info('Fonctionnalité support à implémenter')
         break
       default:
-        console.log('Action non définie pour:', item.title)
+        console.info('Action non définie pour:', item.title)
     }
   }
 }
 
-// Gestion spéciale pour la recherche de coach
 const handleCoachSearch = () => {
-  // Logique pour ouvrir un modal ou naviguer vers une page de recherche
-  console.log('Ouvrir la recherche de coach')
-  // Vous pouvez émettre un événement ou ouvrir un modal ici
+  console.info('Ouvrir la recherche de coach')
 }
 
-// Debug : affichage des informations utilisateur (à supprimer en production)
-console.log('User info:', {
+console.info('User info:', {
   isAuthenticated: authStore.isAuthenticated,
   user: authStore.user,
   roles: authStore.userRoles,
@@ -193,7 +137,6 @@ console.log('User info:', {
   z-index: 1500 !important;
 }
 
-/* Section profil utilisateur */
 .user-profile {
   padding: 16px !important;
   margin-bottom: 8px !important;
@@ -214,7 +157,6 @@ console.log('User info:', {
   font-size: 12px !important;
 }
 
-/* Liste de navigation */
 .sidebar-list {
   padding-top: 8px !important;
   gap: 15px;
@@ -235,13 +177,11 @@ console.log('User info:', {
   background-color: rgba(255, 255, 255, 0.2) !important;
 }
 
-/* Icônes */
 .sidebar-item .v-list-item__prepend .v-icon {
   color: #ffffff !important;
   font-size: 25px !important;
 }
 
-/* Texte */
 .sidebar-item .v-list-item-title {
   font-family: 'Spectral', serif !important;
   font-weight: 400 !important;
@@ -250,27 +190,22 @@ console.log('User info:', {
   color: #ffffff !important;
 }
 
-/* Flèche pour sous-menus */
 .sidebar-item .v-list-item__append .v-icon {
   color: #ffffff !important;
 }
 
-/* Mode rail (replié) */
 .v-navigation-drawer--rail .sidebar-item .v-list-item-title {
   font-size: 10px !important;
   text-align: center !important;
   line-height: 100% !important;
 }
 
-/* Import Google Font */
 @import url('https://fonts.googleapis.com/css2?family=Spectral:wght@400&display=swap');
 
-/* Personnalisation du divider */
 .v-divider {
   margin: 8px 16px !important;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .sidebar-menu {
     position: fixed !important;
