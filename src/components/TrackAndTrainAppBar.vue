@@ -10,22 +10,7 @@
       </div>
     </v-toolbar-title>
     <div>
-      <v-btn
-        v-if="authStore.userName"
-        icon
-        variant="text"
-        class="notification-btn mr-2"
-        @click="handleNotifications"
-      >
-        <v-icon color="white" size="24">mdi-bell-outline</v-icon>
-        <v-badge
-          v-if="notificationCount > 0"
-          :content="notificationCount"
-          color="error"
-          class="notification-badge"
-        >
-        </v-badge>
-      </v-btn>
+      <NotificationMenu v-if="authStore.userName" class="mr-2" />
 
       <template v-if="authStore.isAuthenticated">
         <v-menu
@@ -86,12 +71,12 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import NotificationMenu from './NotificationMenu.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
 
 const avatarMenu = ref(false)
-const notificationCount = ref(3)
 
 const defaultAvatar =
   'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face'
@@ -102,10 +87,6 @@ const userAvatar = computed(() => {
 
 const toggleAvatarMenu = () => {
   avatarMenu.value = true
-}
-
-const handleNotifications = () => {
-  console.info('Ouvrir les notifications')
 }
 
 const goToProfile = () => {
