@@ -1,13 +1,18 @@
 <template>
   <v-card class="coach-card" hover>
-    <v-card-title>
-      {{ name }}
-    </v-card-title>
+    <div class="coach-header">
+      <v-avatar class="coach-avatar" size="60">
+        <v-img :src="picture || defaultPicture" :alt="`Photo de ${name}`" cover />
+      </v-avatar>
+      <v-card-title class="coach-name">
+        {{ name }}
+      </v-card-title>
+    </div>
     <v-card-text>
-      <p class="text-body-2">{{ description }}</p>
+      <p class="text-body-2" style="color: white">{{ description }}</p>
     </v-card-text>
     <v-card-actions>
-      <PrimaryButton  @click="selectCoach"> Choisir ce coach </PrimaryButton>
+      <PrimaryButton @click="selectCoach"> Choisir ce coach </PrimaryButton>
     </v-card-actions>
   </v-card>
 </template>
@@ -28,9 +33,15 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  picture: {
+    type: String,
+    default: null,
+  },
 })
 
 const router = useRouter()
+const defaultPicture =
+  'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face'
 
 const selectCoach = () => {
   if (props.id) {
@@ -49,5 +60,21 @@ const selectCoach = () => {
 
 .coach-card:hover {
   transform: translateY(-4px);
+}
+
+.coach-header {
+  display: flex;
+  align-items: center;
+  padding: 16px 16px 8px 16px;
+  gap: 12px;
+}
+
+.coach-avatar {
+  flex-shrink: 0;
+}
+
+.coach-name {
+  padding: 0;
+  flex: 1;
 }
 </style>

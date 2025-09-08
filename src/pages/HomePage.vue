@@ -4,7 +4,7 @@
       <h1 class="my-4">Bienvenue {{ auth.user.name }}</h1>
       <v-row>
         <v-col cols="12" md="5">
-           <TrainingList :trainings="trainings" @trainingClick="goToTraining"> </TrainingList>
+          <TrainingList :trainings="trainings" @trainingClick="goToTraining"> </TrainingList>
         </v-col>
         <v-col cols="12" md="7">
           <UserCoachCard :coach="auth.user.coach" />
@@ -17,7 +17,7 @@
 
     <template v-else>
       <h1>Coach Profiles</h1>
-      <p>
+      <p class="mb-4" style="color: white">
         Bienvenue sur TrackTrain! Trouvez votre coach et suivez vos progrès. Inscrivez-vous pour une
         expérience personnalisée.
       </p>
@@ -27,6 +27,7 @@
           :key="coach.id"
           :name="coach.name"
           :description="coach.description"
+          :picture="coach.profile_picture_url"
         />
       </div>
     </template>
@@ -91,7 +92,6 @@ const goToTraining = (trainingId) => {
 const goToDiet = (dietId) => {
   router.push(`/diet/${dietId}`)
 }
-
 </script>
 
 <style lang="scss" scoped>
