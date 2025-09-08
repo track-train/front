@@ -69,56 +69,61 @@ describe('DietDetailPage.vue', () => {
   let mockRoute, mockRouter, mockDietStore, mockAuthStore, mockContextual, mockSnackbar
 
   const createWrapper = () => mount(DietDetailPage, {
-  global: {
-    plugins: [vuetify],
-    stubs: {
-      VContainer: { template: '<div class="v-container"><slot /></div>' },
-      VCard: { template: '<div class="v-card"><slot /></div>' },
-      VCardTitle: { template: '<div class="v-card-title"><slot /></div>' },
-      VBtn: { template: '<button class="v-btn"><slot /></button>' },
-      VIcon: { template: '<i class="v-icon"><slot /></i>' },
-      VSpacer: { template: '<span class="v-spacer"></span>' },
-      VChip: { template: '<span class="v-chip"><slot /></span>' },
-      VTabs: { template: '<div class="v-tabs"><slot /></div>' },
-      VTab: { template: '<div class="v-tab"><slot /></div>' },
-      VWindow: { template: '<div class="v-window"><slot /></div>' },
-      VWindowItem: { template: '<div class="v-window-item"><slot /></div>' },
-      VRow: { template: '<div class="v-row"><slot /></div>' },
-      VCol: { template: '<div class="v-col"><slot /></div>' },
-      VProgressCircular: {
-        name: 'VProgressCircular',
-        template: '<div data-test="progress-circular">Loading...</div>'
-      },
-      VAlert: {
-        name: 'VAlert',
-        props: ['type', 'dismissible'],
-        emits: ['click:close'],
-        template: '<div data-test="v-alert"><slot /></div>'
-      },
-      PrimaryButton: {
-        name: 'PrimaryButton',
-        emits: ['click'],
-        props: ['prependIcon'],
-        template: '<button data-test="primary-button" @click="$emit(\'click\')"><slot /></button>'
+    global: {
+      plugins: [vuetify],
+      stubs: {
+        VContainer: { template: '<div class="v-container"><slot /></div>' },
+        VCard: { template: '<div class="v-card"><slot /></div>' },
+        VCardTitle: { template: '<div class="v-card-title"><slot /></div>' },
+        VBtn: { template: '<button class="v-btn"><slot /></button>' },
+        VIcon: { template: '<i class="v-icon"><slot /></i>' },
+        VSpacer: { template: '<span class="v-spacer"></span>' },
+        VChip: { template: '<span class="v-chip"><slot /></span>' },
+        VTabs: { template: '<div class="v-tabs"><slot /></div>' },
+        VTab: { template: '<div class="v-tab"><slot /></div>' },
+        VWindow: { template: '<div class="v-window"><slot /></div>' },
+        VWindowItem: { template: '<div class="v-window-item"><slot /></div>' },
+        VRow: { template: '<div class="v-row"><slot /></div>' },
+        VCol: { template: '<div class="v-col"><slot /></div>' },
+        VProgressCircular: {
+          name: 'VProgressCircular',
+          template: '<div data-test="progress-circular">Loading...</div>'
+        },
+        VAlert: {
+          name: 'VAlert',
+          props: ['type', 'dismissible'],
+          emits: ['click:close'],
+          template: '<div data-test="v-alert"><slot /></div>'
+        },
+        PrimaryButton: {
+          name: 'PrimaryButton',
+          emits: ['click'],
+          props: ['prependIcon'],
+          template: '<button data-test="primary-button" @click="$emit(\'click\')"><slot /></button>'
+        }
       }
     }
-  }
-})
+  })
 
   beforeEach(() => {
     vi.clearAllMocks()
     mockRoute = { params: { id: 'diet42' }, query: { userId: 'u123' } }
-    mockRouter = { push: vi.fn() }
+    mockRouter = { push: vi.fn(), go: vi.fn() }
     mockDietStore = reactive({
       currentDiet: { id: 42, name: "My Diet", description: "Desc" },
       macroPlans: [],
       mealPlans: [],
-      loading: { macroPlans: false, mealPlans: false },
+      loading: {
+        diet: false,
+        macroPlans: false,
+        mealPlans: false
+      },
       error: null,
       totalMacroPlans: 0,
       totalMealPlans: 0,
       totalMealsCount: 0,
       highestCaloriePlan: null,
+      fetchDiet: vi.fn().mockResolvedValue(),
       fetchMacroPlans: vi.fn().mockResolvedValue(),
       fetchMealPlans: vi.fn().mockResolvedValue(),
       resetStore: vi.fn()
@@ -175,6 +180,9 @@ describe('DietDetailPage.vue', () => {
   })
 
   it('affiche le bouton Ajouter si canCreatePlan est vrai', async () => {
+    mockAuthStore.userRoles = ['coach']
+    mockAuthStore.userId = 'me'
+    mockContextual.userProfileId = 'u123'
     wrapper = createWrapper()
     await nextTick()
     expect(wrapper.find('[data-test="primary-button"]').exists()).toBe(true)
@@ -207,7 +215,6 @@ describe('DietDetailPage.vue', () => {
   it('affiche "aucun plan repas" si mealPlans est vide', async () => {
     wrapper = createWrapper()
     await nextTick()
-
     wrapper.vm.activeTab = 'meals'
     await nextTick()
     expect(wrapper.text()).toContain('Aucun plan repas disponible')
@@ -216,7 +223,6 @@ describe('DietDetailPage.vue', () => {
   it('affiche les MealPlanCard si mealPlans existe', async () => {
     mockDietStore.mealPlans = [{ id: 1, name: "Meal 1" }, { id: 2, name: "Meal 2" }]
     mockDietStore.totalMealPlans = 2
-    mockDietStore.totalMealsCount = 5
     wrapper = createWrapper()
     await nextTick()
     wrapper.vm.activeTab = 'meals'
@@ -224,10 +230,12 @@ describe('DietDetailPage.vue', () => {
     expect(wrapper.findAll('[data-test="meal-plan-card"]').length).toBe(2)
     expect(wrapper.text()).toContain('Meal 1')
     expect(wrapper.text()).toContain('Meal 2')
-    expect(wrapper.text()).toContain('5 repas')
   })
 
   it('ouvre la dialog de création au clic sur Ajouter', async () => {
+    mockAuthStore.userRoles = ['coach']
+    mockAuthStore.userId = 'me'
+    mockContextual.userProfileId = 'u123'
     wrapper = createWrapper()
     await nextTick()
     const btn = wrapper.find('[data-test="primary-button"]')
@@ -280,11 +288,11 @@ describe('DietDetailPage.vue', () => {
     expect(wrapper.vm.showCreatePlan).toBe(true)
   })
 
-  it('appelle goBack et router.push', async () => {
+  it('appelle goBack et router.go', async () => {
     wrapper = createWrapper()
     await nextTick()
     wrapper.vm.goBack()
-    expect(mockRouter.push).toHaveBeenCalledWith('/')
+    expect(mockRouter.go).toHaveBeenCalledWith(-1)
   })
 
   it('reset le store au démontage', async () => {

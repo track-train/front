@@ -1,19 +1,48 @@
 import { mount } from '@vue/test-utils'
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { nextTick } from 'vue'
+import { createVuetify } from 'vuetify'
 
+// Mock des stores
 vi.mock('@/stores/auth', () => ({
-  useAuthStore: vi.fn()
+  useAuthStore: vi.fn(),
 }))
 vi.mock('@/stores/snackbar', () => ({
-  useSnackbarStore: vi.fn()
+  useSnackbarStore: vi.fn(),
 }))
 vi.mock('@/plugins/axios', () => ({
   default: {
     get: vi.fn(),
     patch: vi.fn(),
-    post: vi.fn()
-  }
+    post: vi.fn(),
+  },
+}))
+
+// Mock des composants
+vi.mock('@/components/SecondaryButton.vue', () => ({
+  default: {
+    name: 'SecondaryButton',
+    props: ['prependIcon', 'loading'],
+    emits: ['click'],
+    template:
+      '<button data-test="secondary-btn" @click="$emit(\'click\')" :disabled="loading"><slot /></button>',
+  },
+}))
+vi.mock('@/components/PrimaryButton.vue', () => ({
+  default: {
+    name: 'PrimaryButton',
+    props: ['loading'],
+    emits: ['click'],
+    template:
+      '<button data-test="primary-btn" @click="$emit(\'click\')" :disabled="loading"><slot /></button>',
+  },
+}))
+vi.mock('@/components/TertiaryButton.vue', () => ({
+  default: {
+    name: 'TertiaryButton',
+    emits: ['click'],
+    template: '<button data-test="tertiary-btn" @click="$emit(\'click\')"><slot /></button>',
+  },
 }))
 
 const mockUser = {
@@ -28,16 +57,17 @@ const mockUser = {
   description: 'Coach sportif',
   legacy: '10 ans',
   created_at: '2023-01-01T12:00:00Z',
-  photo: ''
+  profile_picture_url: '',
+  background_picture_url: '',
 }
 
 const mockAuthStore = {
-  user: { ...mockUser }
+  user: { ...mockUser },
 }
 const mockSnackbar = {
   success: vi.fn(),
   error: vi.fn(),
-  info: vi.fn()
+  info: vi.fn(),
 }
 
 import ProfilePage from '@/pages/ProfilePage.vue'
@@ -47,21 +77,142 @@ import api from '@/plugins/axios'
 
 describe('ProfilePage.vue', () => {
   let wrapper
+  const vuetify = createVuetify()
+
+  const createWrapper = () => {
+    return mount(ProfilePage, {
+      global: {
+        plugins: [vuetify],
+        stubs: {
+          VContainer: { template: '<div class="v-container"><slot /></div>' },
+          VRow: { template: '<div class="v-row"><slot /></div>' },
+          VCol: { template: '<div class="v-col"><slot /></div>' },
+          VCard: { template: '<div class="v-card"><slot /></div>' },
+          VCardTitle: { template: '<div class="v-card-title"><slot /></div>' },
+          VCardText: { template: '<div class="v-card-text"><slot /></div>' },
+          VCardActions: { template: '<div class="v-card-actions"><slot /></div>' },
+          VAvatar: { template: '<div class="v-avatar"><slot /></div>' },
+          VImg: {
+            props: ['src', 'alt'],
+            template: '<img :src="src" :alt="alt" />',
+          },
+          VOverlay: {
+            props: ['contained'],
+            template: '<div class="v-overlay" v-if="contained"><slot /></div>',
+          },
+          VProgressCircular: {
+            props: ['indeterminate', 'color'],
+            template: '<div class="v-progress-circular">Loading...</div>',
+          },
+          VChip: {
+            props: ['color'],
+            template: '<span class="v-chip" :class="`chip-${color}`"><slot /></span>',
+          },
+          VIcon: {
+            props: ['start'],
+            template: '<i class="v-icon"><slot /></i>',
+          },
+          VBtn: {
+            props: ['icon', 'loading', 'size'],
+            emits: ['click'],
+            template:
+              '<button class="v-btn" @click="$emit(\'click\')" :disabled="loading"><slot /></button>',
+          },
+          VForm: { template: '<form><slot /></form>' },
+          VTextField: {
+            props: [
+              'modelValue',
+              'label',
+              'loading',
+              'type',
+              'step',
+              'prependInnerIcon',
+              'placeholder',
+            ],
+            emits: ['blur', 'update:modelValue', 'keyup'],
+            template: `
+              <div class="v-text-field" :class="{ 'field-saving': loading }">
+                <input
+                  :value="modelValue"
+                  @input="$emit('update:modelValue', $event.target.value)"
+                  @blur="$emit('blur')"
+                  @keyup.enter="$emit('keyup', $event)"
+                  :type="type || 'text'"
+                  :placeholder="placeholder"
+                />
+                <label>{{ label }}</label>
+              </div>
+            `,
+          },
+          VTextarea: {
+            props: ['modelValue', 'label', 'rows', 'loading', 'prependInnerIcon'],
+            emits: ['blur', 'update:modelValue'],
+            template: `
+              <div class="v-textarea" :class="{ 'field-saving': loading }">
+                <textarea
+                  :value="modelValue"
+                  @input="$emit('update:modelValue', $event.target.value)"
+                  @blur="$emit('blur')"
+                  :rows="rows"
+                ></textarea>
+                <label>{{ label }}</label>
+              </div>
+            `,
+          },
+          VSelect: {
+            props: ['modelValue', 'items', 'label', 'loading', 'prependInnerIcon', 'clearable'],
+            emits: ['blur', 'update:modelValue'],
+            template: `
+              <div class="v-select" :class="{ 'field-saving': loading }">
+                <select
+                  :value="modelValue"
+                  @change="$emit('update:modelValue', $event.target.value)"
+                  @blur="$emit('blur')"
+                >
+                  <option v-for="item in items" :key="item" :value="item">{{ item }}</option>
+                </select>
+                <label>{{ label }}</label>
+              </div>
+            `,
+          },
+          VSpacer: { template: '<span class="v-spacer"></span>' },
+          VFadeTransition: { template: '<div><slot /></div>' },
+          VDialog: {
+            props: ['modelValue', 'maxWidth'],
+            template: '<div class="v-dialog" v-if="modelValue"><slot /></div>',
+          },
+          VFileInput: {
+            props: ['modelValue', 'label', 'accept', 'prependInnerIcon', 'variant', 'bgColor'],
+            emits: ['change', 'update:modelValue'],
+            template: `
+              <div class="v-file-input">
+                <input
+                  type="file"
+                  :accept="accept"
+                  @change="$emit('change', Array.from($event.target.files))"
+                />
+                <label>{{ label }}</label>
+              </div>
+            `,
+          },
+        },
+      },
+    })
+  }
 
   beforeEach(() => {
     vi.clearAllMocks()
     useAuthStore.mockReturnValue(mockAuthStore)
     useSnackbarStore.mockReturnValue(mockSnackbar)
     api.get.mockResolvedValue({ data: { ...mockUser } })
-    wrapper = mount(ProfilePage, {
-    })
+    wrapper = createWrapper()
   })
 
   afterEach(() => {
     if (wrapper) wrapper.unmount()
   })
 
-  it('affiche le nom et email de l\'utilisateur', async () => {
+  it("affiche le nom et email de l'utilisateur", async () => {
     await nextTick()
     expect(wrapper.text()).toContain(mockUser.name)
     expect(wrapper.text()).toContain(mockUser.email)
@@ -96,9 +247,11 @@ describe('ProfilePage.vue', () => {
     expect(wrapper.html()).toContain('Expérience')
   })
 
-  it('n\'affiche pas la section coach si pas coach', async () => {
-    mockAuthStore.user.roles = ['user']
-    wrapper = mount(ProfilePage)
+  it("n'affiche pas la section coach si pas coach", async () => {
+    const userWithoutCoach = { ...mockUser, roles: ['user'] }
+    api.get.mockResolvedValue({ data: userWithoutCoach })
+    wrapper.unmount()
+    wrapper = createWrapper()
     await nextTick()
     expect(wrapper.text()).not.toContain('Informations professionnelles')
   })
@@ -117,19 +270,6 @@ describe('ProfilePage.vue', () => {
   })
 
   it('ouvre la dialog photo au clic sur le bouton', async () => {
-    if (!window.visualViewport) {
-      window.visualViewport = {
-        width: 1024,
-        height: 768,
-        scale: 1,
-        offsetLeft: 0,
-        offsetTop: 0,
-        pageLeft: 0,
-        pageTop: 0,
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn()
-      }
-    }
     await nextTick()
     await wrapper.find('[data-test="secondary-btn"]').trigger('click')
     await nextTick()
@@ -148,18 +288,18 @@ describe('ProfilePage.vue', () => {
   })
 
   it('uploadPhoto effectue un upload et met à jour la photo', async () => {
-    api.post.mockResolvedValue({ data: { photo_url: 'url/photo.jpg' } })
+    api.patch.mockResolvedValue({ data: { profile_picture_url: 'url/photo.jpg' } })
     wrapper.vm.selectedPhoto = [new Blob(['dummy'], { type: 'image/png' })]
     wrapper.vm.userProfile = { ...mockUser }
     await wrapper.vm.uploadPhoto()
-    expect(api.post).toHaveBeenCalled()
-    expect(wrapper.vm.userProfile.photo).toBe('url/photo.jpg')
+    expect(api.patch).toHaveBeenCalled()
+    expect(wrapper.vm.userProfile.profile_picture_url).toBe('url/photo.jpg')
     expect(mockSnackbar.success).toHaveBeenCalledWith('Photo de profil mise à jour avec succès')
     expect(wrapper.vm.photoDialog).toBe(false)
   })
 
   it('uploadPhoto gère les erreurs', async () => {
-    api.post.mockRejectedValue({ response: { data: { message: 'Erreur API' } } })
+    api.patch.mockRejectedValue({ response: { data: { message: 'Erreur API' } } })
     wrapper.vm.selectedPhoto = [new Blob(['dummy'], { type: 'image/png' })]
     wrapper.vm.userProfile = { ...mockUser }
     await wrapper.vm.uploadPhoto()
@@ -172,7 +312,9 @@ describe('ProfilePage.vue', () => {
     wrapper.vm.userProfile = { ...mockUser, email: 'new@email.fr' }
     wrapper.vm.originalProfile = { ...mockUser, email: 'jean@test.fr' }
     await wrapper.vm.onFieldBlur('email')
-    expect(api.patch).toHaveBeenCalledWith(`/profiles/${mockUser.id}/email`, { email: 'new@email.fr' })
+    expect(api.patch).toHaveBeenCalledWith(`/profiles/${mockUser.id}/email`, {
+      email: 'new@email.fr',
+    })
     expect(mockSnackbar.success).toHaveBeenCalledWith('Email mis à jour avec succès')
     expect(wrapper.vm.userProfile.email).toBe('new@email.fr')
   })
@@ -182,7 +324,9 @@ describe('ProfilePage.vue', () => {
     wrapper.vm.newPassword = 'azerty123'
     wrapper.vm.userProfile = { ...mockUser }
     await wrapper.vm.onPasswordBlur()
-    expect(api.patch).toHaveBeenCalledWith(`/profiles/${mockUser.id}/password`, { password: 'azerty123' })
+    expect(api.patch).toHaveBeenCalledWith(`/profiles/${mockUser.id}/password`, {
+      password: 'azerty123',
+    })
     expect(mockSnackbar.success).toHaveBeenCalledWith('Mot de passe mis à jour avec succès')
     expect(wrapper.vm.newPassword).toBe('')
   })
@@ -225,7 +369,7 @@ describe('ProfilePage.vue', () => {
     expect(wrapper.vm.getRoleColor('autre')).toBe('grey')
   })
 
-  it('getRoleIcon retourne l\'icône du rôle', () => {
+  it("getRoleIcon retourne l'icône du rôle", () => {
     expect(wrapper.vm.getRoleIcon('admin')).toBe('mdi-crown')
     expect(wrapper.vm.getRoleIcon('coach')).toBe('mdi-account-tie')
     expect(wrapper.vm.getRoleIcon('user')).toBe('mdi-account')
