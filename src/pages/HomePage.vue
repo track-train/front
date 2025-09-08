@@ -13,6 +13,10 @@
           <DietList :diets="diets" @dietClick="goToDiet"> </DietList>
         </v-col>
       </v-row>
+
+      <DailyCheckupFab @open-modal="showDailyCheckupModal = true" />
+
+      <DailyCheckupModal v-model="showDailyCheckupModal" @checkup-created="onCheckupCreated" />
     </template>
 
     <template v-else>
@@ -44,6 +48,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import { useDailyCheckupStore } from '@/stores/dailyCheckup'
 import { useRouter } from 'vue-router'
 import api from '@/plugins/axios'
 
@@ -51,8 +56,11 @@ import CoachCard from '@/components/CoachCard.vue'
 import CoachList from '@/components/CoachList.vue'
 import TrainingList from '@/components/TrainingList.vue'
 import DietList from '@/components/DietList.vue'
+import DailyCheckupFab from '@/components/DailyCheckupFab.vue'
+import DailyCheckupModal from '@/components/DailyCheckupModal.vue'
 
 const auth = useAuthStore()
+const dailyCheckupStore = useDailyCheckupStore()
 const router = useRouter()
 
 const trainings = ref([])
@@ -60,10 +68,12 @@ const diets = ref([])
 const userCoaches = ref([])
 const loading = ref(false)
 const coaches = ref([])
+const showDailyCheckupModal = ref(false)
 
 onMounted(async () => {
   if (auth.user) {
     await fetchUserData()
+    await dailyCheckupStore.fetchDailyCheckups()
   } else {
     await fetchCoaches()
   }
@@ -96,6 +106,10 @@ const fetchCoaches = async () => {
   }
 }
 
+const onCheckupCreated = () => {
+  showDailyCheckupModal.value = false
+}
+
 const goToTraining = (trainingId) => {
   router.push(`/training/${trainingId}`)
 }
@@ -108,7 +122,9 @@ const goToDiet = (dietId) => {
 <style lang="scss" scoped>
 .home-page {
   padding: 2rem;
+  position: relative;
 }
+
 .coach-list {
   display: flex;
   flex-wrap: wrap;

@@ -83,6 +83,12 @@ const routes = [
     props: true,
   },
   {
+    path: '/daily-checkups',
+    name: 'DailyCheckups',
+    component: () => import('@/pages/DailyCheckupsPage.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/training/:id',
     name: 'trainingsDetails',
     component: () => import('@/pages/training/TrainingDetailsPage.vue'),

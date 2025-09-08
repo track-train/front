@@ -50,21 +50,3 @@ function onCoachClick(coach) {
   emit('coachClick', coach)
 }
 </script>
-
-<style lang="scss" scoped>
-.section-card {
-  background: linear-gradient(135deg, rgba(0, 35, 31, 0.95) 0%, rgba(0, 35, 31, 0.85) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-}
-
-.section-header {
-  background: rgba(0, 35, 31, 0.3);
-  color: white;
-  padding: 16px 20px;
-}
-
-.empty-state {
-  color: rgba(255, 255, 255, 0.7);
-}
-</style>
