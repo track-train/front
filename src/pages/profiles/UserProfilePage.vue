@@ -3,21 +3,23 @@
     <v-container>
       <v-row>
         <v-col cols="12" md="6">
+          <v-btn color="secondary" size="large" @click="goBack" class="back-btn">
+            <v-icon start>mdi-arrow-left</v-icon>
+            Retour
+          </v-btn>
           <v-card class="mb-4 fill-height">
             <v-card-title class="d-flex align-center">
               <v-avatar size="48" class="mr-3">
-                <v-icon size="36" color="white">mdi-account</v-icon>
+                <v-img
+                  :src="user?.profile_picture_url || defaultPicture"
+                  :alt="`Photo de ${user?.name || 'Utilisateur'}`"
+                  cover
+                />
               </v-avatar>
               <h2 class="mb-0 ml-2">{{ user?.name || 'Profil utilisateur' }}</h2>
-              <VSpacer b/>
-               <div class="mb-2" v-if="user?.roles">
-                <v-chip
-                  v-for="role in user.roles"
-                  :key="role"
-                  color="#f97316"
-                  class="mr-2"
-                  small
-                >
+              <VSpacer />
+              <div class="mb-2" v-if="user?.roles">
+                <v-chip v-for="role in user.roles" :key="role" color="#f97316" class="mr-2" small>
                   {{ role }}
                 </v-chip>
               </div>
@@ -43,6 +45,16 @@
                 <span v-else class="text-grey">Non renseigné</span>
               </div>
             </v-card-text>
+            <v-card-actions>
+              <v-btn
+                color="primary"
+                variant="outlined"
+                @click="goToDailyCheckups"
+                prepend-icon="mdi-calendar-check"
+              >
+                Voir les Daily Checkups
+              </v-btn>
+            </v-card-actions>
           </v-card>
         </v-col>
       </v-row>
@@ -65,11 +77,7 @@
         <v-col cols="12" md="6">
           <DietList :diets="diets" @dietClick="goToDiet">
             <template #action v-if="canCreateForUser">
-              <PrimaryButton
-                @click="showCreateDiet = true"
-                prepend-icon="mdi-plus"
-                class="ml-2"
-              >
+              <PrimaryButton @click="showCreateDiet = true" prepend-icon="mdi-plus" class="ml-2">
                 Ajouter
               </PrimaryButton>
             </template>
@@ -109,6 +117,15 @@ const loading = ref(false)
 
 const showCreateTraining = ref(false)
 const showCreateDiet = ref(false)
+
+const defaultPicture =
+  'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face'
+
+const goToDailyCheckups = () => {
+  router.push({
+    path: `/daily-checkups/user/${userId.value}`,
+  })
+}
 
 async function fetchUserProfile() {
   loading.value = true
@@ -166,6 +183,10 @@ watch(
     fetchUserDiets()
   },
 )
+
+const goBack = () => {
+  router.go(-1)
+}
 
 const canCreateForUser = computed(
   () => auth.userRoles?.includes('coach') && auth.userId !== userId.value,

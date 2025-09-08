@@ -37,9 +37,7 @@
         <ul class="footer-links">
           <li><router-link to="/feedback" class="footer-link">Support technique</router-link></li>
           <li>
-            <a href="mailto:contact@trackntrain.com" class="footer-link"
-              >contact@trackntrain.com</a
-            >
+            <a href="mailto:contact@trackntrain.com" class="footer-link">contact@trackntrain.com</a>
           </li>
           <li><a href="tel:+33123456789" class="footer-link">01 23 45 67 89</a></li>
         </ul>
@@ -285,7 +283,6 @@ export default {
   font-size: 16px;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .footer-content {
     padding: 40px 20px 20px;

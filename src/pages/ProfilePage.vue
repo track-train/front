@@ -2,7 +2,7 @@
   <div class="profile-page">
     <v-row class="mb-6">
       <v-col cols="12">
-        <v-card class="profile-header">
+        <v-card class="profile-header" :style="backgroundStyle">
           <v-card-text class="text-center py-4">
             <v-row>
               <v-col cols="12" class="d-flex">
@@ -12,11 +12,7 @@
                     class="profile-avatar mb-4"
                     :class="{ 'avatar-loading': fieldLoading.photo }"
                   >
-                      <v-img
-                        :src="userProfile.photo || defaultAvatar"
-                        :alt="`Photo de ${userProfile.name}`"
-                        cover
-                    />
+                    <v-img :src="profileImageUrl" :alt="`Photo de ${userProfile.name}`" cover />
                     <v-overlay
                       v-if="fieldLoading.photo"
                       contained
@@ -25,13 +21,13 @@
                       <v-progress-circular indeterminate color="white" />
                     </v-overlay>
                   </v-avatar>
-                    <SecondaryButton
-                      prepend-icon="mdi-camera"
-                      @click="openPhotoDialog"
-                      :loading="fieldLoading.photo"
-                    >
-                      Changer la photo
-                    </SecondaryButton>
+                  <SecondaryButton
+                    prepend-icon="mdi-camera"
+                    @click="openPhotoDialog"
+                    :loading="fieldLoading.photo"
+                  >
+                    Changer la photo
+                  </SecondaryButton>
                 </div>
                 <v-spacer />
                 <div class="roles-section mt-3">
@@ -39,7 +35,7 @@
                     v-for="role in userProfile.roles"
                     :key="role"
                     :color="getRoleColor(role)"
-                    class="mx-1"
+                    class="mx-3"
                   >
                     <v-icon start>{{ getRoleIcon(role) }}</v-icon>
                     {{ role }}
@@ -52,6 +48,16 @@
               </v-col>
             </v-row>
           </v-card-text>
+
+          <v-btn
+            icon
+            class="background-change-btn"
+            @click="openBackgroundDialog"
+            :loading="fieldLoading.background"
+            size="small"
+          >
+            <v-icon>mdi-image-edit</v-icon>
+          </v-btn>
         </v-card>
       </v-col>
     </v-row>
@@ -363,12 +369,40 @@
         <v-card-actions>
           <v-spacer />
           <TertiaryButton @click="photoDialog = false"> Annuler </TertiaryButton>
-          <PrimaryButton
-            @click="uploadPhoto"
-            :loading="fieldLoading.photo"
-            :disabled="!selectedPhoto?.length"
-          >
-          >
+          <PrimaryButton @click="uploadPhoto" :loading="fieldLoading.photo">
+            Sauvegarder
+          </PrimaryButton>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="backgroundDialog" max-width="500px">
+      <v-card class="photo-card">
+        <v-card-title class="text-white">Changer l'image de fond</v-card-title>
+        <v-card-text>
+          <v-file-input
+            v-model="selectedBackground"
+            label="Sélectionner une image de fond"
+            accept="image/*"
+            prepend-inner-icon="mdi-image"
+            variant="outlined"
+            bg-color="white"
+            @change="previewBackground"
+          />
+
+          <div v-if="backgroundPreview" class="text-center mt-4">
+            <div
+              class="background-preview"
+              :style="{ backgroundImage: `url(${backgroundPreview})` }"
+            >
+              Aperçu
+            </div>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer />
+          <TertiaryButton @click="backgroundDialog = false"> Annuler </TertiaryButton>
+          <PrimaryButton @click="uploadBackground" :loading="fieldLoading.background">
             Sauvegarder
           </PrimaryButton>
         </v-card-actions>
@@ -390,11 +424,16 @@ const userProfile = ref({})
 const originalProfile = ref({})
 const newPassword = ref('')
 const photoDialog = ref(false)
+const backgroundDialog = ref(false)
 const selectedPhoto = ref([])
+const selectedBackground = ref([])
 const photoPreview = ref('')
+const backgroundPreview = ref('')
 
 const defaultAvatar =
   'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face'
+const defaultBackground =
+  'https://images.unsplash.com/photo-1579952363873-27d3bfad9c0d?w=1200&h=600&fit=crop'
 
 const fieldLoading = ref({
   email: false,
@@ -407,6 +446,21 @@ const fieldLoading = ref({
   legacy: false,
   password: false,
   photo: false,
+  background: false,
+})
+
+const profileImageUrl = computed(() => {
+  return userProfile.value.profile_picture_url || defaultAvatar
+})
+
+const backgroundStyle = computed(() => {
+  const backgroundUrl = userProfile.value.background_picture_url || defaultBackground
+  return {
+    backgroundImage: `linear-gradient(180deg, rgba(0, 188, 167, 0.15) 0%, rgba(0, 35, 31, 0.3) 100%), url(${backgroundUrl})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+  }
 })
 
 const currentUser = computed(() => authStore.user)
@@ -515,6 +569,12 @@ const openPhotoDialog = () => {
   photoPreview.value = ''
 }
 
+const openBackgroundDialog = () => {
+  backgroundDialog.value = true
+  selectedBackground.value = []
+  backgroundPreview.value = ''
+}
+
 const previewPhoto = (files) => {
   if (files && files.length > 0) {
     const file = files[0]
@@ -526,23 +586,48 @@ const previewPhoto = (files) => {
   }
 }
 
-const uploadPhoto = async () => {
-  if (!selectedPhoto.value?.length) return
+const previewBackground = (files) => {
+  if (files && files.length > 0) {
+    const file = files[0]
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      backgroundPreview.value = e.target.result
+    }
+    reader.readAsDataURL(file)
+  }
+}
 
+const uploadPhoto = async () => {
   fieldLoading.value.photo = true
 
   try {
+    const file = Array.isArray(selectedPhoto.value) ? selectedPhoto.value[0] : selectedPhoto.value
+
+    if (!file) {
+      snackbar.error('Aucun fichier sélectionné.')
+      fieldLoading.value.photo = false
+      return
+    }
+
     const formData = new FormData()
-    formData.append('photo', selectedPhoto.value[0])
+    formData.append('file', file)
 
-    const response = await api.post(`/profiles/${userProfile.value.id}/photo`, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
+    const response = await api.patch(
+      `/profiles/profile-picture/${userProfile.value.id}`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       },
-    })
+    )
 
-    userProfile.value.photo = response.data.photo_url
-    originalProfile.value.photo = response.data.photo_url
+    userProfile.value.profile_picture_url = response.data.profile_picture_url
+    originalProfile.value.profile_picture_url = response.data.profile_picture_url
+
+    if (authStore.user) {
+      authStore.user.profile_picture_url = response.data.profile_picture_url
+    }
 
     photoDialog.value = false
 
@@ -554,6 +639,54 @@ const uploadPhoto = async () => {
     snackbar.error(message)
   } finally {
     fieldLoading.value.photo = false
+  }
+}
+
+const uploadBackground = async () => {
+  fieldLoading.value.background = true
+
+  try {
+    const file = Array.isArray(selectedBackground.value)
+      ? selectedBackground.value[0]
+      : selectedBackground.value
+
+    if (!file) {
+      snackbar.error('Aucune image sélectionnée.')
+      fieldLoading.value.background = false
+      return
+    }
+
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const response = await api.patch(
+      `/profiles/background-picture/${userProfile.value.id}`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
+    )
+
+    userProfile.value.background_picture_url = response.data.background_picture_url
+    originalProfile.value.background_picture_url = response.data.background_picture_url
+
+    if (authStore.user) {
+      authStore.user.background_picture_url = response.data.background_picture_url
+    }
+
+    backgroundDialog.value = false
+
+    snackbar.success('Image de fond mise à jour avec succès')
+  } catch (error) {
+    console.error("Erreur lors de l'upload de l'image de fond:", error)
+
+    const message =
+      error.response?.data?.message || "Erreur lors de la mise à jour de l'image de fond"
+    snackbar.error(message)
+  } finally {
+    fieldLoading.value.background = false
   }
 }
 
@@ -611,8 +744,41 @@ onMounted(() => {
 }
 
 .profile-header {
-  background: linear-gradient(180deg, rgba(0, 188, 167, 0.15) 0%, rgba(0, 35, 31, 0.3) 100%);
   color: white;
+  position: relative;
+  overflow: hidden;
+}
+
+.background-change-btn {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  color: white !important;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.7) !important;
+    transform: scale(1.05);
+  }
+
+  .v-icon {
+    color: white;
+  }
+}
+
+.background-preview {
+  width: 100%;
+  height: 120px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  border-radius: 8px;
 }
 
 .profile-avatar {
@@ -673,6 +839,11 @@ onMounted(() => {
 @media (max-width: 768px) {
   .profile-page {
     padding: 1rem;
+  }
+
+  .background-change-btn {
+    top: 8px;
+    right: 8px;
   }
 }
 

@@ -77,6 +77,23 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/coach',
+    name: 'coachDetails',
+    component: () => import('@/pages/CoachProfilePage.vue'),
+    props: true,
+  },
+  {
+    path: '/daily-checkups',
+    name: 'DailyCheckups',
+    component: () => import('@/pages/DailyCheckupsPage.vue'),
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/find-coach',
+    name: 'FindCoach',
+    component: () => import('@/pages/FindCoachPage.vue'),
+  },
+  {
     path: '/training/:id',
     name: 'trainingsDetails',
     component: () => import('@/pages/training/TrainingDetailsPage.vue'),
@@ -109,6 +126,12 @@ const routes = [
     component: () => import('@/pages/profiles/UserProfilePage.vue'),
     meta: { requiresAuth: true, requiresRole: ['coach', 'admin'] },
     props: true,
+  },
+  {
+    path: '/daily-checkups/user/:userId',
+    name: 'UserDailyCheckups',
+    component: () => import('@/pages/profiles/UserDailyCheckupsPage.vue'),
+    meta: { requiresAuth: true, requiresRole: 'coach' },
   },
 ]
 

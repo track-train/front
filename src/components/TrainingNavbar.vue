@@ -38,6 +38,22 @@ const allMenuItems = ref([
     requiresAuth: true,
   },
   {
+    title: 'Daily Checkups',
+    icon: 'mdi-clipboard-check',
+    hasSubmenu: false,
+    route: 'DailyCheckups',
+    roles: ['user', 'coach', 'admin'],
+    requiresAuth: true,
+  },
+  {
+    title: 'Trouver un coach',
+    icon: 'mdi-magnify',
+    hasSubmenu: false,
+    route: 'FindCoach',
+    roles: ['user', 'coach', 'admin'],
+    requiresAuth: true,
+  },
+  {
     title: 'Groupes',
     icon: 'mdi-account-group',
     hasSubmenu: false,
@@ -76,6 +92,10 @@ const isActiveRoute = (item) => {
     )
   }
 
+  if (item.route === 'DailyCheckups') {
+    return route.name === 'DailyCheckups'
+  }
+
   return route.name === item.route
 }
 
@@ -95,7 +115,6 @@ const handleItemClick = (item) => {
         handleCoachSearch()
         break
       case 'Diététique':
-
         console.info('Fonctionnalité diététique à implémenter')
         break
       case 'Calendrier':
