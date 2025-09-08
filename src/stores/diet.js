@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import api from '@/plugins/axios'
-import { useAuthStore } from '@/stores/auth'
 
 export const useDietStore = defineStore('diet', {
   state: () => ({
@@ -62,21 +61,18 @@ export const useDietStore = defineStore('diet', {
       }
     },
 
-    async fetchMacroPlans(dietId) {
+    async fetchMacroPlans(dietId, targetUserId) {
       this.loading.macroPlans = true
       this.error = null
 
-      const authStore = useAuthStore()
-      const userId = authStore.userId
-
-      if (!userId) {
-        this.error = 'Utilisateur non connecté'
+      if (!targetUserId) {
+        this.error = 'Utilisateur cible non trouvé'
         this.loading.macroPlans = false
-        throw new Error('Utilisateur non connecté')
+        throw new Error('Utilisateur cible non trouvé')
       }
 
       try {
-        const response = await api.get(`/diets/${dietId}/user/${userId}/macro_plans`)
+        const response = await api.get(`/diets/${dietId}/user/${targetUserId}/macro_plans`)
         this.macroPlans = response.data || []
         return response.data
       } catch (error) {
@@ -89,21 +85,18 @@ export const useDietStore = defineStore('diet', {
       }
     },
 
-    async fetchMealPlans(dietId) {
+    async fetchMealPlans(dietId, targetUserId) {
       this.loading.mealPlans = true
       this.error = null
 
-      const authStore = useAuthStore()
-      const userId = authStore.userId
-
-      if (!userId) {
-        this.error = 'Utilisateur non connecté'
+      if (!targetUserId) {
+        this.error = 'Utilisateur cible non trouvé'
         this.loading.mealPlans = false
-        throw new Error('Utilisateur non connecté')
+        throw new Error('Utilisateur cible non trouvé')
       }
 
       try {
-        const response = await api.get(`/diets/${dietId}/user/${userId}/meal_plans`)
+        const response = await api.get(`/diets/${dietId}/user/${targetUserId}/meal_plans`)
         this.mealPlans = response.data || []
         return response.data
       } catch (error) {
