@@ -1,11 +1,7 @@
 <template>
-  <v-app-bar
-    :elevation="0"
-    class="custom-app-bar w-100"
-    :height="80"
-  >
+  <v-app-bar :elevation="0" class="custom-app-bar w-100" :height="80">
     <v-toolbar-title class="logo-container d-flex justify-center">
-      <div class="logo-wrapper">
+      <div class="logo-wrapper" @click="router.push('/')" style="cursor: pointer">
         <img
           src="../assets/image/trackAndTrain-logo.png"
           alt="Track&Train Logo"
@@ -39,19 +35,9 @@
           transition="slide-y-transition"
         >
           <template #activator="{ props }">
-            <v-btn
-              icon
-              variant="text"
-              class="avatar-btn"
-              v-bind="props"
-              @click="toggleAvatarMenu"
-            >
+            <v-btn icon variant="text" class="avatar-btn" v-bind="props" @click="toggleAvatarMenu">
               <v-avatar size="40" class="user-avatar">
-                <v-img
-                  :src="userAvatar"
-                  :alt="authStore.userName"
-                  cover
-                />
+                <v-img :src="userAvatar" :alt="authStore.userName" cover />
               </v-avatar>
             </v-btn>
           </template>
@@ -65,24 +51,20 @@
                   </v-avatar>
                 </template>
                 <v-list-item-title class="user-name">{{ authStore.userName }}</v-list-item-title>
-                <v-list-item-subtitle class="user-email">{{ authStore.userEmail }}</v-list-item-subtitle>
+                <v-list-item-subtitle class="user-email">{{
+                  authStore.userEmail
+                }}</v-list-item-subtitle>
               </v-list-item>
 
               <v-divider></v-divider>
-              <v-list-item
-                @click="goToProfile"
-                class="menu-item"
-              >
+              <v-list-item @click="goToProfile" class="menu-item">
                 <template #prepend>
                   <v-icon>mdi-account-circle</v-icon>
                 </template>
                 <v-list-item-title>Profil</v-list-item-title>
               </v-list-item>
 
-              <v-list-item
-                @click="logout"
-                class="menu-item logout-item"
-              >
+              <v-list-item @click="logout" class="menu-item logout-item">
                 <template #prepend>
                   <v-icon>mdi-logout</v-icon>
                 </template>
@@ -94,12 +76,7 @@
       </template>
 
       <template v-else>
-        <PrimaryButton
-          class="login-btn"
-          @click="goToLogin"
-        >
-          Se connecter
-        </PrimaryButton>
+        <PrimaryButton class="login-btn" @click="goToLogin"> Se connecter </PrimaryButton>
       </template>
     </div>
   </v-app-bar>
@@ -116,8 +93,11 @@ const authStore = useAuthStore()
 const avatarMenu = ref(false)
 const notificationCount = ref(3)
 
+const defaultAvatar =
+  'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face'
+
 const userAvatar = computed(() => {
-  return authStore.user?.avatar ? authStore.user.avatar : `https://ui-avatars.com/api/?name=${encodeURIComponent(authStore.userName || 'User')}&background=22c55e&color=ffffff`
+  return authStore.user?.profile_picture_url || defaultAvatar
 })
 
 const toggleAvatarMenu = () => {
@@ -150,7 +130,11 @@ const goToLogin = () => {
 
 <style lang="scss" scoped>
 .custom-app-bar {
-  background: linear-gradient(180deg, rgba(0, 188, 167, 0.15) 0%, rgba(0, 35, 31, 0.3) 100%) !important;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 188, 167, 0.15) 0%,
+    rgba(0, 35, 31, 0.3) 100%
+  ) !important;
   margin: 0 auto !important;
   padding: 5px 20px !important;
   justify-content: center !important;
@@ -168,7 +152,6 @@ const goToLogin = () => {
   justify-content: center !important;
 }
 
-
 .logo-image {
   width: 20% !important;
   height: 20% !important;
@@ -185,7 +168,6 @@ const goToLogin = () => {
   right: -5px !important;
 }
 
-/* Avatar */
 .avatar-btn {
   padding: 0 !important;
 }
@@ -199,7 +181,6 @@ const goToLogin = () => {
   border-color: rgba(255, 255, 255, 0.6) !important;
 }
 
-/* Menu dropdown */
 .avatar-menu-card {
   margin-top: 8px !important;
   border-radius: 12px !important;
@@ -241,7 +222,6 @@ const goToLogin = () => {
   color: #ef4444 !important;
 }
 
-/* Bouton de connexion */
 .login-btn {
   border-color: rgba(255, 255, 255, 0.5) !important;
   color: #ffffff !important;
@@ -257,7 +237,6 @@ const goToLogin = () => {
   border-color: rgba(255, 255, 255, 0.8) !important;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .custom-app-bar {
     padding: 5px 10px !important;

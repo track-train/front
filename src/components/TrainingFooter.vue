@@ -27,7 +27,7 @@
         <ul class="footer-links">
           <li><router-link to="/about-us" class="footer-link">À propos</router-link></li>
           <li><router-link to="/become-coach" class="footer-link">Devenir coach</router-link></li>
-          <li><router-link to="/find-coach" class="footer-link">Trouver un coach</router-link></li>
+          <li><router-link to="/" class="footer-link">Trouver un coach</router-link></li>
           <li><router-link to="/features" class="footer-link">Fonctionnalités</router-link></li>
         </ul>
       </div>
@@ -37,9 +37,7 @@
         <ul class="footer-links">
           <li><router-link to="/feedback" class="footer-link">Support technique</router-link></li>
           <li>
-            <a href="mailto:contact@trackntrain.com" class="footer-link"
-              >contact@trackntrain.com</a
-            >
+            <a href="mailto:contact@trackntrain.com" class="footer-link">contact@trackntrain.com</a>
           </li>
           <li><a href="tel:+33123456789" class="footer-link">01 23 45 67 89</a></li>
         </ul>
@@ -285,7 +283,6 @@ export default {
   font-size: 16px;
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
   .footer-content {
     padding: 40px 20px 20px;

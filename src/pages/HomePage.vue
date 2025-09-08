@@ -7,7 +7,7 @@
           <TrainingList :trainings="trainings" @trainingClick="goToTraining"> </TrainingList>
         </v-col>
         <v-col cols="12" md="7">
-          <UserCoachCard :coach="auth.user.coach" />
+          <CoachList :coaches="userCoaches" />
         </v-col>
         <v-col cols="12">
           <DietList :diets="diets" @dietClick="goToDiet"> </DietList>
@@ -25,9 +25,16 @@
         <CoachCard
           v-for="coach in coaches"
           :key="coach.id"
+          :id="coach.id"
           :name="coach.name"
           :description="coach.description"
           :picture="coach.profile_picture_url"
+          :sex="coach.sex"
+          :age="coach.age"
+          :contact="coach.contact"
+          :pricing="coach.pricing"
+          :legacy="coach.legacy"
+          :background-picture="coach.background_picture_url"
         />
       </div>
     </template>
@@ -41,7 +48,7 @@ import { useRouter } from 'vue-router'
 import api from '@/plugins/axios'
 
 import CoachCard from '@/components/CoachCard.vue'
-import UserCoachCard from '@/components/UserCoachCard.vue'
+import CoachList from '@/components/CoachList.vue'
 import TrainingList from '@/components/TrainingList.vue'
 import DietList from '@/components/DietList.vue'
 
@@ -50,6 +57,7 @@ const router = useRouter()
 
 const trainings = ref([])
 const diets = ref([])
+const userCoaches = ref([])
 const loading = ref(false)
 const coaches = ref([])
 
@@ -69,6 +77,9 @@ const fetchUserData = async () => {
 
     const dietsResponse = await api.get('/diets/mine')
     diets.value = dietsResponse.data || []
+
+    const CoachResponse = await api.get('/groups/coachs/mine')
+    userCoaches.value = CoachResponse.data || []
   } catch (error) {
     console.error('Erreur lors du chargement des données utilisateur:', error)
   } finally {

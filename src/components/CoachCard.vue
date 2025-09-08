@@ -18,7 +18,9 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useSelectedCoachStore } from '@/stores/selectedCoach'
 
 const props = defineProps({
   name: {
@@ -37,16 +39,53 @@ const props = defineProps({
     type: String,
     default: null,
   },
+  sex: {
+    type: String,
+    default: null,
+  },
+  age: {
+    type: Number,
+    default: null,
+  },
+  contact: {
+    type: String,
+    default: null,
+  },
+  pricing: {
+    type: Number,
+    default: null,
+  },
+  legacy: {
+    type: String,
+    default: null,
+  },
+  backgroundPicture: {
+    type: String,
+    default: null,
+  },
 })
 
 const router = useRouter()
-const defaultPicture =
-  'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face'
+const selectedCoachStore = useSelectedCoachStore()
+
+const defaultPicture = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face'
+
+const coachData = computed(() => ({
+  id: props.id,
+  name: props.name,
+  description: props.description,
+  sex: props.sex,
+  age: props.age,
+  contact: props.contact,
+  pricing: props.pricing,
+  legacy: props.legacy,
+  profile_picture_url: props.picture,
+  background_picture_url: props.backgroundPicture,
+}))
 
 const selectCoach = () => {
-  if (props.id) {
-    router.push(`/coach/${props.id}`)
-  }
+  selectedCoachStore.setSelectedCoach(coachData.value)
+  router.push('/coach')
 }
 </script>
 
