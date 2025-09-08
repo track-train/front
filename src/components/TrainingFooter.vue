@@ -27,7 +27,7 @@
         <ul class="footer-links">
           <li><router-link to="/about-us" class="footer-link">À propos</router-link></li>
           <li><router-link to="/become-coach" class="footer-link">Devenir coach</router-link></li>
-          <li><router-link to="/" class="footer-link">Trouver un coach</router-link></li>
+          <li><router-link to="/find-coach" class="footer-link">Trouver un coach</router-link></li>
           <li><router-link to="/features" class="footer-link">Fonctionnalités</router-link></li>
         </ul>
       </div>

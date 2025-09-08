@@ -109,7 +109,9 @@
                     :size="$vuetify.display.mobile ? 'default' : 'large'"
                     class="mb-2 rating-mobile"
                   />
-                  <p class="rating-label">Qualité du sommeil: {{ Math.round(form.sleepQuality * 2) }}/10</p>
+                  <p class="rating-label">
+                    Qualité du sommeil: {{ Math.round(form.sleepQuality * 2) }}/10
+                  </p>
                 </div>
               </v-col>
 
@@ -213,7 +215,7 @@
         </div>
       </div>
 
-      <div class="modal-footer d-flex justify-end pa-4 gap-2">
+      <div v-if="!disabled" class="modal-footer d-flex justify-end pa-4 gap-2">
         <v-btn
           variant="text"
           @click="closeModal"
@@ -251,16 +253,19 @@
 
   <v-dialog
     v-model="lightboxOpen"
-    max-width="90vw"
-    max-height="90vh"
+    max-width="80vw"
+    width="60vw"
+    height="80vh"
+    max-height="80vh"
     class="lightbox-dialog"
     :fullscreen="$vuetify.display.mobile"
+    scrollable
+    persistent
+    content-class="d-flex align-center justify-center"
   >
     <div class="lightbox-container">
       <div class="lightbox-header">
-        <div class="image-counter">
-          {{ currentImageIndex + 1 }} / {{ displayImages.length }}
-        </div>
+        <div class="image-counter">{{ currentImageIndex + 1 }} / {{ displayImages.length }}</div>
         <v-btn icon variant="text" @click="closeLightbox" class="lightbox-close">
           <v-icon color="white" size="32">mdi-close</v-icon>
         </v-btn>
@@ -338,6 +343,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 })
 
 const emit = defineEmits(['update:modelValue', 'checkup-created', 'checkup-deleted'])
@@ -373,7 +382,6 @@ const form = ref({
 
 const displayImages = computed(() => {
   if (props.viewMode && props.checkupData) {
-
     if (props.checkupData.picture) {
       if (Array.isArray(props.checkupData.picture)) {
         return props.checkupData.picture
@@ -480,7 +488,7 @@ watch(
       loadCheckupData(newData)
     }
   },
-  { immediate: true }
+  { immediate: true },
 )
 
 watch(
@@ -499,11 +507,10 @@ watch(
       }
     }
   },
-  { deep: true }
+  { deep: true },
 )
 
 const loadCheckupData = (data) => {
-
   form.value = {
     pictures: [],
     sleepDuration: data.sleepduration || data.sleep_duration || '',
@@ -515,7 +522,6 @@ const loadCheckupData = (data) => {
     digestion: (data.digestion || 5) / 2,
     dayOn: data.dayon || data.day_on || false,
   }
-
 }
 
 const removeImage = (index) => {
@@ -575,7 +581,6 @@ const submitCheckup = async () => {
     emit('checkup-created', result)
     closeModal()
     resetForm()
-
   } catch (error) {
     console.error('❌ Erreur lors de la création du daily checkup:', error)
   }
@@ -590,7 +595,6 @@ const deleteCheckup = async () => {
 
     emit('checkup-deleted', props.checkupData.id)
     closeModal()
-
   } catch (error) {
     console.error('❌ Erreur lors de la suppression du daily checkup:', error)
   } finally {
@@ -610,11 +614,10 @@ const formatDate = (timestamp) => {
   })
 }
 
-const onImageLoad = () => {
-}
+const onImageLoad = () => {}
 
 const onImageError = (event) => {
-  console.error('❌ Erreur de chargement d\'image:', event.target.src)
+  console.error("❌ Erreur de chargement d'image:", event.target.src)
 }
 
 const closeModal = () => {
@@ -628,7 +631,6 @@ const closeModal = () => {
 </script>
 
 <style lang="scss" scoped>
-
 .daily-checkup-dialog {
   &.v-dialog--fullscreen .daily-checkup-modal {
     height: 100vh;
@@ -904,7 +906,7 @@ const closeModal = () => {
 
 .lightbox-container {
   background: rgba(0, 0, 0, 0.95);
-  width: 100vw;
+  width: 70vw;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -921,7 +923,7 @@ const closeModal = () => {
   left: 0;
   right: 0;
   z-index: 10;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent);
 }
 
 .image-counter {
@@ -1009,7 +1011,7 @@ const closeModal = () => {
   bottom: 0;
   left: 0;
   right: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
 }
 
 .image-dots {

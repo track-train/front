@@ -201,7 +201,7 @@ const enhancedTasks = computed(() => {
 })
 
 const goBack = () => {
-  router.push('/')
+  router.go(-1)
 }
 
 const openValidationDialog = (task) => {
@@ -300,10 +300,10 @@ onUnmounted(() => {
 
 .tasks-table {
   border-radius: 8px;
-  background-color: color-mix(in srgb, #00231F, white 10%);
-  border: 1px solid color-mix(in srgb, #00231F, white 20%);
+  background-color: color-mix(in srgb, #00231f, white 10%);
+  border: 1px solid color-mix(in srgb, #00231f, white 20%);
   color: white;
-  :deep(.v-table__wrapper){
+  :deep(.v-table__wrapper) {
     thead {
       padding: 0.75rem 1rem;
     }

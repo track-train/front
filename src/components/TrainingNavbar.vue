@@ -46,6 +46,14 @@ const allMenuItems = ref([
     requiresAuth: true,
   },
   {
+    title: 'Trouver un coach',
+    icon: 'mdi-magnify',
+    hasSubmenu: false,
+    route: 'FindCoach',
+    roles: ['user', 'coach', 'admin'],
+    requiresAuth: true,
+  },
+  {
     title: 'Groupes',
     icon: 'mdi-account-group',
     hasSubmenu: false,
