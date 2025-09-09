@@ -68,7 +68,7 @@ export const useDailyCheckupStore = defineStore('dailyCheckup', {
       const snackbar = useSnackbarStore()
 
       try {
-        const response = await api.post('/daily-checkups/', formData, {
+        const response = await api.post('/daily-checkups', formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
