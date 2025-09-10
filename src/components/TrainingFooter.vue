@@ -92,6 +92,7 @@ export default {
   border-top: 3px solid rgba(219, 126, 219, 0.3);
   width: 100%;
   flex-shrink: 0;
+  z-index: 2000 !important;
 }
 
 .footer-content {

@@ -20,7 +20,7 @@
             </v-col>
             <v-col cols="12">
               <span class="register-class mt-3"
-                >Déjà inscrit ? <RouterLink to="/">Se connecter</RouterLink></span
+                >Déjà inscrit ? <RouterLink to="/login">Se connecter</RouterLink></span
               >
             </v-col>
           </v-row>

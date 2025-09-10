@@ -2,8 +2,8 @@
   <v-container class="groups-coach-page">
     <div class="title-container d-flex align-center">
       <h1 class="my-4">Mes groupes existants</h1>
-      <PrimaryButton class="ml-2" :disabled="!canCreateGroup" @click="openDialog">
-        <v-icon >mdi-plus</v-icon>
+      <PrimaryButton class="ml-2 create-btn" :disabled="!canCreateGroup" @click="openDialog">
+        <v-icon>mdi-plus</v-icon>
       </PrimaryButton>
     </div>
 
@@ -23,12 +23,7 @@
       <v-tooltip v-if="!canCreateGroup">
         <template #activator="{ on, attrs }">
           <span>
-            <PrimaryButton
-              @click="openDialog"
-              :disabled="!canCreateGroup"
-              v-bind="attrs"
-              v-on="on"
-            >
+            <PrimaryButton @click="openDialog" :disabled="!canCreateGroup" v-bind="attrs" v-on="on">
               <v-icon left>mdi-plus</v-icon>
               Créer un groupe
             </PrimaryButton>
@@ -94,3 +89,16 @@ onUnmounted(() => {
   groupsStore.reset()
 })
 </script>
+
+<style lang="scss" scoped>
+.create-btn {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
+
+  &:hover {
+    box-shadow: 0 6px 16px rgba(34, 197, 94, 0.4);
+    transform: translateY(-1px);
+  }
+}
+</style>

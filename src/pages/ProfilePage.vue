@@ -35,7 +35,7 @@
                     v-for="role in userProfile.roles"
                     :key="role"
                     :color="getRoleColor(role)"
-                    class="mx-3"
+                    class="role-chip mx-3"
                   >
                     <v-icon start>{{ getRoleIcon(role) }}</v-icon>
                     {{ role }}
@@ -825,6 +825,10 @@ onMounted(() => {
   justify-content: center;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.role-chip {
+  background-color: white !important;
 }
 
 @keyframes spin {

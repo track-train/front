@@ -1,12 +1,10 @@
 <template>
   <v-app>
     <TrackAndTrainAppBar />
-    <v-container fluid class="container">
-      <div class="content-wrapper" :class="{ 'with-padding': needsPadding }">
-        <TrainingNavbar v-if="authStore.isAuthenticated" />
-        <RouterView />
-        <AppSnackbar />
-      </div>
+    <v-container fluid :class="mobile ? 'mobile-container' : 'container'">
+      <TrainingNavbar v-if="authStore.isAuthenticated" />
+      <RouterView />
+      <AppSnackbar />
     </v-container>
     <TrainingFooter />
   </v-app>
@@ -18,27 +16,12 @@ import AppSnackbar from './components/AppSnackbar.vue'
 import TrainingNavbar from './components/TrainingNavbar.vue'
 import TrainingFooter from './components/TrainingFooter.vue'
 import { useAuthStore } from './stores/auth'
-import { onMounted, computed } from 'vue'
+import { onMounted } from 'vue'
+import { useDisplay } from 'vuetify'
 import TrackAndTrainAppBar from './components/TrackAndTrainAppBar.vue'
-import { useRoute } from 'vue-router'
 
 const authStore = useAuthStore()
-const route = useRoute()
-
-const fullWidthPages = [
-  'about-us',
-  'become-coach',
-  'feedback',
-  'cgu',
-  'privacy',
-  'legal',
-  'cookies',
-  'features',
-]
-
-const needsPadding = computed(() => {
-  return !fullWidthPages.includes(route.name)
-})
+const { mobile } = useDisplay()
 
 onMounted(async () => {
   await authStore.initialize()
@@ -46,19 +29,15 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.container {
+.container,
+.mobile-container {
   min-height: calc(100vh - 120px);
   background-color: #00231f;
-  padding: 0 !important;
-  padding-top: 80px !important;
+  padding-top: 106px !important;
 }
 
-.content-wrapper {
-  width: 100%;
-
-  &.with-padding {
-    padding: 56px;
-  }
+.container {
+  padding-left: 72px !important;
 }
 
 :deep(.v-application) {
@@ -74,10 +53,6 @@ onMounted(async () => {
 :deep(.v-container) {
   max-width: 100% !important;
   margin: 0 !important;
-}
-
-:deep(.v-app-bar) {
-  z-index: 2000 !important;
 }
 
 :deep(.v-main) {

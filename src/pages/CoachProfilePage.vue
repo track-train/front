@@ -12,15 +12,15 @@
               </div>
               <v-spacer />
               <div class="info-section mt-3">
-                <v-chip v-if="coachData.sex" style="color: chartreuse" class="mx-1 mb-2">
+                <v-chip v-if="coachData.sex" color="primary" class="role-chip mx-1 mb-2">
                   <v-icon start>{{ getSexIcon(coachData.sex) }}</v-icon>
                   {{ coachData.sex }}
                 </v-chip>
-                <v-chip v-if="coachData.age" style="color: red" class="mx-1 mb-2">
+                <v-chip v-if="coachData.age" color="secondary" class="role-chip mx-1 mb-2">
                   <v-icon start>mdi-cake</v-icon>
                   {{ coachData.age }} ans
                 </v-chip>
-                <v-chip v-if="coachData.pricing" style="color: yellow" class="mx-1 mb-2">
+                <v-chip v-if="coachData.pricing" color="warning" class="role-chip mx-1 mb-2">
                   <v-icon start>mdi-currency-eur</v-icon>
                   {{ coachData.pricing }}€
                 </v-chip>
@@ -219,7 +219,10 @@ onMounted(() => {
   min-height: 60vh;
 }
 
-/* Responsive */
+.role-chip {
+  background-color: white !important;
+}
+
 @media (max-width: 768px) {
   .coach-page {
     padding: 1rem;

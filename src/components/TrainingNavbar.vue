@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer permanent class="sidebar-menu" expand-on-hover rail>
+  <v-navigation-drawer v-if="!mobile" permanent class="sidebar-menu" expand-on-hover rail>
     <v-list density="compact" nav class="sidebar-list">
       <v-list-item
         v-for="item in filteredMenuItems"
@@ -17,16 +17,50 @@
       </v-list-item>
     </v-list>
   </v-navigation-drawer>
+  <v-fab
+    v-else
+    :absolute="false"
+    :app="true"
+    location="top left"
+    size="large"
+    icon
+    class="fab-menu"
+    @click="open = !open"
+  >
+    <v-icon>{{ open ? 'mdi-close' : 'mdi-menu' }}</v-icon>
+    <v-speed-dial
+      v-model="open"
+      location="bottom center"
+      transition="slide-y-reverse-transition"
+      activator="parent"
+      open-on-hover="false"
+    >
+      <v-btn
+        v-for="item in filteredMenuItems"
+        :key="item.title"
+        rounded
+        class="fab-item"
+        @click="handleItemClick(item)"
+      >
+        <v-icon size="28" class="mr-2">{{ item.icon }}</v-icon>
+        <span class="visually-hidden">{{ item.title }}</span>
+      </v-btn>
+    </v-speed-dial>
+  </v-fab>
 </template>
 
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useDisplay } from 'vuetify'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
+const { mobile } = useDisplay()
+
+const open = ref(false)
 
 const allMenuItems = ref([
   {
@@ -109,43 +143,8 @@ const handleItemClick = (item) => {
     } else {
       router.push({ name: item.route })
     }
-  } else {
-    switch (item.title) {
-      case 'Recherche de coach':
-        handleCoachSearch()
-        break
-      case 'Diététique':
-        console.info('Fonctionnalité diététique à implémenter')
-        break
-      case 'Calendrier':
-        console.info('Fonctionnalité calendrier à implémenter')
-        break
-      case 'Statistiques':
-        console.info('Fonctionnalité statistiques à implémenter')
-        break
-      case 'Messagerie':
-        console.info('Fonctionnalité messagerie à implémenter')
-        break
-      case 'Support':
-        console.info('Fonctionnalité support à implémenter')
-        break
-      default:
-        console.info('Action non définie pour:', item.title)
-    }
   }
 }
-
-const handleCoachSearch = () => {
-  console.info('Ouvrir la recherche de coach')
-}
-
-console.info('User info:', {
-  isAuthenticated: authStore.isAuthenticated,
-  user: authStore.user,
-  roles: authStore.userRoles,
-  isAdmin: authStore.isAdmin,
-  isCoach: authStore.isCoach,
-})
 </script>
 
 <style lang="scss" scoped>
@@ -230,5 +229,22 @@ console.info('User info:', {
   .sidebar-menu {
     position: fixed !important;
   }
+}
+
+.fab-menu {
+  top: 5px !important;
+  left: 5px !important;
+  z-index: 3000 !important;
+  :deep(.v-fab__container) {
+    .v-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+      color: #ffffff;
+    }
+  }
+}
+
+.fab-item {
+   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+      color: #ffffff;
 }
 </style>

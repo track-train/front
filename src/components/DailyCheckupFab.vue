@@ -38,7 +38,7 @@ const openModal = () => {
   height: 56px;
   border-radius: 50%;
 
-  background: linear-gradient(135deg, #22c55e, #2dd4bf);
+  background: linear-gradient(135deg, #db7edb 0%, #06b6d4 100%);
   box-shadow: 0 8px 24px rgba(34, 197, 94, 0.3);
 
   display: flex;
