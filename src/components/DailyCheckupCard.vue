@@ -57,10 +57,10 @@
 
         <v-spacer />
 
-        <v-btn size="small" variant="tonal" color="primary">
+        <SecondaryButton size="small">
           Voir détails
           <v-icon end>mdi-arrow-right</v-icon>
-        </v-btn>
+        </SecondaryButton>
       </div>
     </v-card-text>
   </v-card>

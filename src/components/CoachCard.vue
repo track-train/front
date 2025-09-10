@@ -1,5 +1,5 @@
 <template>
-  <v-card class="coach-card" hover>
+  <v-card :class="smAndUp ? 'coach-card' : ''" hover>
     <div class="coach-header">
       <v-avatar class="coach-avatar" size="60">
         <v-img :src="picture || defaultPicture" :alt="`Photo de ${name}`" cover />
@@ -9,7 +9,7 @@
       </v-card-title>
     </div>
     <v-card-text>
-      <p class="text-body-2" style="color: white">{{ description }}</p>
+      <p class="overflow-text text-body-2" style="color: white">{{ description }}</p>
     </v-card-text>
     <v-card-actions>
       <PrimaryButton @click="selectCoach"> Choisir ce coach </PrimaryButton>
@@ -21,6 +21,7 @@
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSelectedCoachStore } from '@/stores/selectedCoach'
+import { useDisplay } from 'vuetify'
 
 const props = defineProps({
   name: {
@@ -67,6 +68,7 @@ const props = defineProps({
 
 const router = useRouter()
 const selectedCoachStore = useSelectedCoachStore()
+const { smAndUp } = useDisplay()
 
 const defaultPicture = 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=400&fit=crop&crop=face'
 
@@ -115,5 +117,12 @@ const selectCoach = () => {
 .coach-name {
   padding: 0;
   flex: 1;
+}
+.overflow-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>

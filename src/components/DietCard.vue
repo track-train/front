@@ -6,7 +6,7 @@
       <p class="text-caption text-grey">Créé le {{ formatDate(diet.created_at) }}</p>
     </v-card-text>
     <v-card-actions>
-      <SecondaryButton >Voir détails</SecondaryButton>
+      <PrimaryButton @click="$emit('click')">Voir détails</PrimaryButton>
     </v-card-actions>
   </v-card>
 </template>

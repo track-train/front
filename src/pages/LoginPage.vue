@@ -1,24 +1,15 @@
 <template>
-  <v-row class="w-100 h-100">
+  <v-row>
     <v-col cols="12" class="d-flex justify-center align-center">
       <v-card width="400" class="card-glass pa-3">
         <v-cardTitle>Se connecter</v-cardTitle>
         <v-card-text>
           <v-row>
             <v-col cols="12">
-              <v-text-field
-                v-model="email"
-                label="Email"
-                type="email"
-                class="mb-3"
-              />
+              <v-text-field v-model="email" label="Email" type="email" class="mb-3" />
             </v-col>
             <v-col cols="12">
-              <v-text-field
-                v-model="password"
-                label="Mot de passe"
-                type="password"
-              />
+              <v-text-field v-model="password" label="Mot de passe" type="password" />
               <p v-if="authStore.error" class="text-red-600 mt-2">{{ authStore.error }}</p>
             </v-col>
             <v-col cols="12">

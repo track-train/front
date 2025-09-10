@@ -326,6 +326,7 @@ const goToDiet = (dietId) => {
 .home-page {
   min-height: 100vh;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  
 }
 
 .home-page > template:first-child {

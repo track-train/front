@@ -1,11 +1,12 @@
 <template>
   <v-app-bar :elevation="0" class="custom-app-bar w-100" :height="80">
-    <v-toolbar-title class="logo-container d-flex justify-center">
+    <v-toolbar-title class="logo-container d-flex justify-start justify-md-center">
       <div class="logo-wrapper" @click="router.push('/')" style="cursor: pointer">
         <img
           src="../assets/image/trackAndTrain-logo.png"
           alt="Track&Train Logo"
-          class="logo-image"
+          :width="mdAndUp ? '20%' : '50%'"
+          :height="mdAndUp ? '20%' : '50%'"
         />
       </div>
     </v-toolbar-title>
@@ -61,7 +62,7 @@
       </template>
 
       <template v-else>
-        <PrimaryButton class="login-btn" @click="goToLogin"> Se connecter </PrimaryButton>
+        <PrimaryButton  @click="goToLogin"> Se connecter </PrimaryButton>
       </template>
     </div>
   </v-app-bar>
@@ -71,10 +72,12 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useDisplay } from 'vuetify'
 import NotificationMenu from './NotificationMenu.vue'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const { mdAndUp } = useDisplay()
 
 const avatarMenu = ref(false)
 
@@ -133,11 +136,6 @@ const goToLogin = () => {
   justify-content: center !important;
 }
 
-.logo-image {
-  width: 20% !important;
-  height: 20% !important;
-  object-fit: contain !important;
-}
 
 .notification-btn {
   position: relative !important;
@@ -201,21 +199,6 @@ const goToLogin = () => {
 
 .logout-item:hover .v-icon {
   color: #ef4444 !important;
-}
-
-.login-btn {
-  border-color: rgba(255, 255, 255, 0.5) !important;
-  color: #ffffff !important;
-  font-weight: 500 !important;
-  text-transform: none !important;
-  padding: 8px 20px !important;
-  border-radius: 8px !important;
-  transition: all 0.3s ease !important;
-}
-
-.login-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1) !important;
-  border-color: rgba(255, 255, 255, 0.8) !important;
 }
 
 @media (max-width: 768px) {

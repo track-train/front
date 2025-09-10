@@ -1,94 +1,87 @@
 <template>
-  <div class="profile-page">
-    <v-container>
-      <v-row>
-        <v-col cols="12" md="6">
-          <v-btn color="secondary" size="large" @click="goBack" class="back-btn">
-            <v-icon start>mdi-arrow-left</v-icon>
-            Retour
-          </v-btn>
-          <v-card class="mb-4 fill-height">
-            <v-card-title class="d-flex align-center">
-              <v-avatar size="48" class="mr-3">
-                <v-img
-                  :src="user?.profile_picture_url || defaultPicture"
-                  :alt="`Photo de ${user?.name || 'Utilisateur'}`"
-                  cover
-                />
-              </v-avatar>
-              <h2 class="mb-0 ml-2">{{ user?.name || 'Profil utilisateur' }}</h2>
-              <VSpacer />
-              <div class="mb-2" v-if="user?.roles">
-                <v-chip v-for="role in user.roles" :key="role" color="#f97316" class="mr-2" small>
-                  {{ role }}
-                </v-chip>
-              </div>
-            </v-card-title>
-            <v-card-subtitle>
-              <div class="text-caption text-grey">
-                <span v-if="user?.email">{{ user.email }}</span>
-                <span v-if="user?.age"> — {{ user.age }} ans</span>
-              </div>
-              <div class="text-body-2 text-grey" v-if="user?.description">
-                {{ user.description }}
-              </div>
-            </v-card-subtitle>
-            <v-card-text>
-              <div>
-                <span class="font-weight-bold text-white">Contact: </span>
-                <span v-if="user?.contact" class="text-white">{{ user.contact }}</span>
-                <span v-else class="text-grey">Non renseigné</span>
-              </div>
-              <div>
-                <span class="font-weight-bold text-white">Sex: </span>
-                <span v-if="user?.sex" class="text-white">{{ user.sex }}</span>
-                <span v-else class="text-grey">Non renseigné</span>
-              </div>
-            </v-card-text>
-            <v-card-actions>
-              <v-btn
-                color="primary"
-                variant="outlined"
-                @click="goToDailyCheckups"
-                prepend-icon="mdi-calendar-check"
-              >
-                Voir les Daily Checkups
-              </v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-      </v-row>
+  <v-row>
+    <v-col cols="12">
+      <v-btn color="secondary" size="large" @click="goBack" class="back-btn">
+        <v-icon start>mdi-arrow-left</v-icon>
+        Retour
+      </v-btn>
+    </v-col>
+    <v-col cols="12" md="6">
+      <v-card class="mb-4 fill-height">
+        <v-card-title class="d-flex align-center">
+          <v-avatar size="48" class="mr-3">
+            <v-img
+              :src="user?.profile_picture_url || defaultPicture"
+              :alt="`Photo de ${user?.name || 'Utilisateur'}`"
+              cover
+            />
+          </v-avatar>
+          <h2 class="mb-0 ml-2">{{ user?.name || 'Profil utilisateur' }}</h2>
+          <VSpacer />
+          <div class="mb-2" v-if="user?.roles">
+            <v-chip v-for="role in user.roles" :key="role" color="#f97316" class="mr-2" small>
+              {{ role }}
+            </v-chip>
+          </div>
+        </v-card-title>
+        <v-card-subtitle>
+          <div class="text-caption text-grey">
+            <span v-if="user?.email">{{ user.email }}</span>
+            <span v-if="user?.age"> — {{ user.age }} ans</span>
+          </div>
+          <div class="text-body-2 text-grey" v-if="user?.description">
+            {{ user.description }}
+          </div>
+        </v-card-subtitle>
+        <v-card-text>
+          <div>
+            <span class="font-weight-bold text-white">Contact: </span>
+            <span v-if="user?.contact" class="text-white">{{ user.contact }}</span>
+            <span v-else class="text-grey">Non renseigné</span>
+          </div>
+          <div>
+            <span class="font-weight-bold text-white">Sex: </span>
+            <span v-if="user?.sex" class="text-white">{{ user.sex }}</span>
+            <span v-else class="text-grey">Non renseigné</span>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <PrimaryButton @click="goToDailyCheckups" prepend-icon="mdi-calendar-check">
+            Voir les Daily Checkups
+          </PrimaryButton>
+        </v-card-actions>
+      </v-card>
+    </v-col>
+  </v-row>
 
-      <v-row>
-        <v-col cols="12" md="6">
-          <TrainingList :trainings="trainings" @trainingClick="goToTraining">
-            <template #action v-if="canCreateForUser">
-              <PrimaryButton
-                @click="showCreateTraining = true"
-                class="ml-2"
-                elevation="1"
-                prepend-icon="mdi-plus"
-              >
-                Ajouter
-              </PrimaryButton>
-            </template>
-          </TrainingList>
-        </v-col>
-        <v-col cols="12" md="6">
-          <DietList :diets="diets" @dietClick="goToDiet">
-            <template #action v-if="canCreateForUser">
-              <PrimaryButton @click="showCreateDiet = true" prepend-icon="mdi-plus" class="ml-2">
-                Ajouter
-              </PrimaryButton>
-            </template>
-          </DietList>
-        </v-col>
-      </v-row>
-    </v-container>
+  <v-row>
+    <v-col cols="12" md="6">
+      <TrainingList :trainings="trainings" @trainingClick="goToTraining">
+        <template #action v-if="canCreateForUser">
+          <PrimaryButton
+            @click="showCreateTraining = true"
+            class="ml-2"
+            elevation="1"
+            prepend-icon="mdi-plus"
+          >
+            Ajouter
+          </PrimaryButton>
+        </template>
+      </TrainingList>
+    </v-col>
+    <v-col cols="12" md="6">
+      <DietList :diets="diets" @dietClick="goToDiet">
+        <template #action v-if="canCreateForUser">
+          <PrimaryButton @click="showCreateDiet = true" prepend-icon="mdi-plus" class="ml-2">
+            Ajouter
+          </PrimaryButton>
+        </template>
+      </DietList>
+    </v-col>
+  </v-row>
 
-    <TrainingCreateDialog v-model="showCreateTraining" @created="createTraining" />
-    <DietCreateDialog v-model="showCreateDiet" @created="createDiet" />
-  </div>
+  <TrainingCreateDialog v-model="showCreateTraining" @created="createTraining" />
+  <DietCreateDialog v-model="showCreateDiet" @created="createDiet" />
 </template>
 
 <script setup>
@@ -227,9 +220,3 @@ async function createDiet({ name, description }) {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-.profile-page {
-  padding: 2rem;
-}
-</style>

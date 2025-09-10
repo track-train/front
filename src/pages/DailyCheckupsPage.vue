@@ -106,7 +106,13 @@
               : "Commencez dès aujourd'hui votre suivi quotidien !"
           }}
         </p>
-        <v-btn v-if="!searchQuery" color="primary" size="large" @click="openCreateModal">
+        <v-btn
+          v-if="!searchQuery"
+          color="primary"
+          class="create-btn"
+          size="large"
+          @click="openCreateModal"
+        >
           <v-icon start>mdi-plus</v-icon>
           Créer mon premier checkup
         </v-btn>
@@ -317,7 +323,7 @@ onMounted(() => {
 }
 
 .create-btn {
-  background: linear-gradient(135deg, #22c55e, #2dd4bf) !important;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
   color: white !important;
   box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
 
@@ -353,7 +359,7 @@ onMounted(() => {
 }
 
 .filters-section {
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(140, 245, 235, 0.15);
   border-radius: 12px;
   padding: 1.5rem;
   backdrop-filter: blur(10px);

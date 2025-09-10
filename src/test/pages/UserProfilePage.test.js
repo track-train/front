@@ -21,7 +21,7 @@ vi.mock('@/components/TrainingList.vue', () => ({
 
 vi.mock('@/components/DietList.vue', () => ({
   default: {
-    name: 'DietList', 
+    name: 'DietList',
     template: '<div data-testid="diet-list"><slot name="action"></slot></div>',
     props: ['diets'],
     emits: ['dietClick']
@@ -121,18 +121,18 @@ describe('UserProfilePage', () => {
     router = createRouter({
       history: createWebHistory(),
       routes: [
-        { 
-          path: '/profile/:uuid', 
+        {
+          path: '/profile/:uuid',
           component: UserProfilePage,
           name: 'profile'
         },
-        { 
-          path: '/training/:id', 
+        {
+          path: '/training/:id',
           component: { template: '<div>Training</div>' },
           name: 'training'
         },
-        { 
-          path: '/diet/:id', 
+        {
+          path: '/diet/:id',
           component: { template: '<div>Diet</div>' },
           name: 'diet'
         }
@@ -144,9 +144,9 @@ describe('UserProfilePage', () => {
 
     const { default: api } = await import('@/plugins/axios')
     mockApi = api
-    
+
     vi.clearAllMocks()
-    
+
     mockApi.get.mockImplementation((url) => {
       if (url.includes('/profiles/')) {
         return Promise.resolve({ data: mockUser })
@@ -171,14 +171,14 @@ describe('UserProfilePage', () => {
 
   const createWrapper = async (routeParams = { uuid: 'test-user-id' }) => {
     await router.push(`/profile/${routeParams.uuid}`)
-    
+
     wrapper = mount(UserProfilePage, {
       global: {
         plugins: [vuetify, router, pinia],
         stubs: {
           VContainer: { template: '<div class="v-container"><slot /></div>' },
           VRow: { template: '<div class="v-row"><slot /></div>' },
-          VCol: { 
+          VCol: {
             template: '<div class="v-col"><slot /></div>',
             props: ['cols', 'md']
           },
@@ -186,16 +186,16 @@ describe('UserProfilePage', () => {
           VCardTitle: { template: '<div class="v-card-title"><slot /></div>' },
           VCardSubtitle: { template: '<div class="v-card-subtitle"><slot /></div>' },
           VCardText: { template: '<div class="v-card-text"><slot /></div>' },
-          VAvatar: { 
+          VAvatar: {
             template: '<div class="v-avatar"><slot /></div>',
             props: ['size']
           },
-          VIcon: { 
+          VIcon: {
             template: '<div class="v-icon">{{ icon }}</div>',
             props: ['size', 'color', 'icon']
           },
           VSpacer: { template: '<div class="v-spacer"></div>' },
-          VChip: { 
+          VChip: {
             template: '<div class="v-chip"><slot /></div>',
             props: ['color', 'small']
           }
@@ -208,12 +208,6 @@ describe('UserProfilePage', () => {
   }
 
   describe('Montage du composant', () => {
-    it('devrait se monter correctement', async () => {
-      await createWrapper()
-      expect(wrapper.exists()).toBe(true)
-      expect(wrapper.classes()).toContain('profile-page')
-    })
-
     it('devrait définir userId depuis les paramètres de route', async () => {
       await createWrapper({ uuid: 'custom-user-id' })
       expect(mockContextualStore.setUserProfileId).toHaveBeenCalledWith('custom-user-id')
@@ -292,15 +286,15 @@ describe('UserProfilePage', () => {
   describe('Navigation', () => {
     it('devrait naviguer vers une page de training avec les bons paramètres', async () => {
       await createWrapper()
-      
+
       const pushSpy = vi.fn()
       router.push = pushSpy
-      
+
       const trainingList = wrapper.findComponent({ name: 'TrainingList' })
       await trainingList.vm.$emit('trainingClick', 'training-123')
-      
+
       await flushPromises()
-      
+
       expect(pushSpy).toHaveBeenCalledWith({
         path: '/training/training-123',
         query: { userId: 'test-user-id' }
@@ -309,15 +303,15 @@ describe('UserProfilePage', () => {
 
     it('devrait naviguer vers une page de diet avec les bons paramètres', async () => {
       await createWrapper()
-      
+
       const pushSpy = vi.fn()
       router.push = pushSpy
-      
+
       const dietList = wrapper.findComponent({ name: 'DietList' })
       await dietList.vm.$emit('dietClick', 'diet-456')
-      
+
       await flushPromises()
-      
+
       expect(pushSpy).toHaveBeenCalledWith({
         path: '/diet/diet-456',
         query: { userId: 'test-user-id' }
@@ -328,14 +322,14 @@ describe('UserProfilePage', () => {
   describe('Création de training', () => {
     it('devrait créer un training avec succès', async () => {
       await createWrapper()
-      
+
       const trainingDialog = wrapper.findComponent({ name: 'TrainingCreateDialog' })
       expect(trainingDialog.exists()).toBe(true)
-      
+
       await trainingDialog.vm.$emit('created', { name: 'New Training', description: 'New Description' })
-      
+
       await flushPromises()
-      
+
       expect(mockApi.post).toHaveBeenCalledWith('/trainings/test-user-id', {
         name: 'New Training',
         description: 'New Description'
@@ -345,14 +339,14 @@ describe('UserProfilePage', () => {
 
     it('devrait gérer les erreurs de création de training', async () => {
       mockApi.post.mockRejectedValueOnce(new Error('Creation failed'))
-      
+
       await createWrapper()
-      
+
       const trainingDialog = wrapper.findComponent({ name: 'TrainingCreateDialog' })
       await trainingDialog.vm.$emit('created', { name: 'New Training', description: 'New Description' })
-      
+
       await flushPromises()
-      
+
       expect(mockSnackbarStore.error).toHaveBeenCalledWith('Erreur lors de la création du training.')
     })
   })
@@ -360,14 +354,14 @@ describe('UserProfilePage', () => {
   describe('Création de diet', () => {
     it('devrait créer un diet avec succès', async () => {
       await createWrapper()
-      
+
       const dietDialog = wrapper.findComponent({ name: 'DietCreateDialog' })
       expect(dietDialog.exists()).toBe(true)
-      
+
       await dietDialog.vm.$emit('created', { name: 'New Diet', description: 'New Diet Description' })
-      
+
       await flushPromises()
-      
+
       expect(mockApi.post).toHaveBeenCalledWith('/diets/test-user-id', {
         name: 'New Diet',
         description: 'New Diet Description'
@@ -377,14 +371,14 @@ describe('UserProfilePage', () => {
 
     it('devrait gérer les erreurs de création de diet', async () => {
       mockApi.post.mockRejectedValueOnce(new Error('Creation failed'))
-      
+
       await createWrapper()
-      
+
       const dietDialog = wrapper.findComponent({ name: 'DietCreateDialog' })
       await dietDialog.vm.$emit('created', { name: 'New Diet', description: 'New Diet Description' })
-      
+
       await flushPromises()
-      
+
       expect(mockSnackbarStore.error).toHaveBeenCalledWith('Erreur lors de la création du diet.')
     })
   })
@@ -392,20 +386,20 @@ describe('UserProfilePage', () => {
   describe('Watchers et lifecycle', () => {
     it('devrait réagir aux changements de route', async () => {
       await createWrapper({ uuid: 'user1' })
-      
+
       mockContextualStore.setUserProfileId.mockClear()
       mockApi.get.mockClear()
-      
+
       await router.push('/profile/user2')
       await flushPromises()
-      
+
       expect(mockContextualStore.setUserProfileId).toHaveBeenCalledWith('user2')
     })
 
     it('devrait nettoyer le contextual store au démontage', async () => {
       await createWrapper()
       wrapper.unmount()
-      
+
       expect(mockContextualStore.clearUserProfileId).toHaveBeenCalled()
     })
   })
@@ -413,10 +407,10 @@ describe('UserProfilePage', () => {
   describe('États et réactivité', () => {
     it('devrait passer les bonnes props aux composants enfants', async () => {
       await createWrapper()
-      
+
       const trainingList = wrapper.findComponent({ name: 'TrainingList' })
       const dietList = wrapper.findComponent({ name: 'DietList' })
-      
+
       expect(trainingList.exists()).toBe(true)
       expect(dietList.exists()).toBe(true)
 
@@ -433,10 +427,10 @@ describe('UserProfilePage', () => {
       })
 
       await createWrapper()
-      
+
       const trainingList = wrapper.findComponent({ name: 'TrainingList' })
       const dietList = wrapper.findComponent({ name: 'DietList' })
-      
+
       expect(trainingList.props('trainings')).toEqual([])
       expect(dietList.props('diets')).toEqual([])
     })
@@ -446,12 +440,12 @@ describe('UserProfilePage', () => {
     it('devrait calculer correctement canCreateForUser pour un coach', async () => {
       mockAuthStore.userRoles = ['coach']
       mockAuthStore.userId = 'different-user-id'
-      
+
       await createWrapper({ uuid: 'test-user-id' })
-      
+
       const trainingList = wrapper.findComponent({ name: 'TrainingList' })
       const dietList = wrapper.findComponent({ name: 'DietList' })
-      
+
       expect(trainingList.exists()).toBe(true)
       expect(dietList.exists()).toBe(true)
     })
@@ -459,12 +453,12 @@ describe('UserProfilePage', () => {
     it('devrait calculer correctement canCreateForUser quand c\'est le même utilisateur', async () => {
       mockAuthStore.userRoles = ['coach']
       mockAuthStore.userId = 'test-user-id'
-      
+
       await createWrapper({ uuid: 'test-user-id' })
-      
+
       const trainingList = wrapper.findComponent({ name: 'TrainingList' })
       const dietList = wrapper.findComponent({ name: 'DietList' })
-      
+
       expect(trainingList.exists()).toBe(true)
       expect(dietList.exists()).toBe(true)
     })
@@ -472,12 +466,12 @@ describe('UserProfilePage', () => {
     it('devrait calculer correctement canCreateForUser pour un non-coach', async () => {
       mockAuthStore.userRoles = ['user']
       mockAuthStore.userId = 'different-user-id'
-      
+
       await createWrapper({ uuid: 'test-user-id' })
-      
+
       const trainingList = wrapper.findComponent({ name: 'TrainingList' })
       const dietList = wrapper.findComponent({ name: 'DietList' })
-      
+
       expect(trainingList.exists()).toBe(true)
       expect(dietList.exists()).toBe(true)
     })

@@ -7,14 +7,9 @@
     max-width="400"
   >
     <template #activator="{ props }">
-      <v-btn icon variant="text" class="notification-btn" v-bind="props" @click="handleMenuToggle">
-        <v-icon color="white" size="24">mdi-bell-outline</v-icon>
-        <v-badge
-          v-if="unreadCount > 0"
-          :content="unreadCount"
-          color="error"
-          class="notification-badge"
-        >
+      <v-btn icon variant="text" class="mr-2" v-bind="props" @click="handleMenuToggle">
+        <v-badge v-if="unreadCount > 0" :content="unreadCount" color="error" location="top left">
+          <v-icon color="white" size="24">mdi-bell-outline</v-icon>
         </v-badge>
       </v-btn>
     </template>
@@ -177,16 +172,6 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.notification-btn {
-  position: relative;
-}
-
-.notification-badge {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-}
-
 .notification-menu {
   background: linear-gradient(180deg, #0a796c, #083f39);
   border-radius: 12px;
