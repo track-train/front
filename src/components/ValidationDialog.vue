@@ -119,7 +119,12 @@
       <v-card-actions class="pa-4">
         <v-spacer />
         <TertiaryButton @click="closeDialog"> Annuler </TertiaryButton>
-        <PrimaryButton prepend-icon="mdi-check" :loading="loading" :disabled="!formValid" @click="submitValidation">
+        <PrimaryButton
+          prepend-icon="mdi-check"
+          :loading="loading"
+          :disabled="!formValid"
+          @click="submitValidation"
+        >
           Valider l'exercice
         </PrimaryButton>
       </v-card-actions>
@@ -271,6 +276,19 @@ const submitValidation = async () => {
 }
 
 .validation-card {
-  background-color: #00231f !important;;
+  background: linear-gradient(180deg, #0a796c, #083f39);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+
+  &.mobile {
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
 }
 </style>

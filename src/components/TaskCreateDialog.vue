@@ -5,17 +5,30 @@
         <span class="text-h6">Créer un nouvel exercice</span>
       </v-card-title>
       <v-card-text>
-        <v-text-field v-model="exercise_name" label="Nom de l'exercice" required />
+        <v-text-field v-model="exercise_name" label="Nom de l'exercice" required class="pa-2" />
         <v-text-field
           v-model.number="rest_time"
           label="Temps de repos (min)"
           type="number"
           required
+          class="pa-2"
         />
-        <v-text-field v-model.number="repetitions" label="Répétitions" type="number" required />
-        <v-text-field v-model.number="set_number" label="Nombre de séries" type="number" required />
-        <v-select v-model="method" label="Méthode" :items="methodOptions" required />
-        <v-text-field v-model.number="rir" label="RIR" type="number" required />
+        <v-text-field
+          v-model.number="repetitions"
+          label="Répétitions"
+          type="number"
+          required
+          class="pa-2"
+        />
+        <v-text-field
+          v-model.number="set_number"
+          label="Nombre de séries"
+          type="number"
+          required
+          class="pa-2"
+        />
+        <v-select v-model="method" label="Méthode" :items="methodOptions" required class="pa-2" />
+        <v-text-field v-model.number="rir" label="RIR" type="number" required class="pa-2" />
       </v-card-text>
       <v-card-actions>
         <v-spacer />
@@ -87,7 +100,10 @@ async function submit() {
 
 <style lang="scss" scoped>
 .task-dialog {
-  background-color: #00231f;
-  color: white;
+  background: linear-gradient(180deg, #0a796c, #083f39);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  flex-direction: column;
 }
 </style>

@@ -852,6 +852,10 @@ onMounted(() => {
 }
 
 .photo-card {
-  background-color: #00231f !important;
+  background: linear-gradient(180deg, #0a796c, #083f39);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  flex-direction: column;
 }
 </style>

@@ -1,10 +1,10 @@
 <template>
   <v-row>
     <v-col cols="12">
-      <v-btn color="secondary" size="large" @click="goBack" class="back-btn">
+      <PrimaryButton color="secondary" size="large" @click="goBack">
         <v-icon start>mdi-arrow-left</v-icon>
         Retour
-      </v-btn>
+      </PrimaryButton>
     </v-col>
     <v-col cols="12" md="6">
       <v-card class="mb-4 fill-height">

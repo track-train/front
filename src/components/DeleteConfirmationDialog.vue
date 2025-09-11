@@ -8,7 +8,9 @@
       <v-card-text class="pt-4">
         <div class="text-center">
           <v-icon size="64" color="#920002" class="mb-3">mdi-delete-forever</v-icon>
-          <p class="text-body-1 mb-2 text-white">Êtes-vous sûr de vouloir supprimer cette validation ?</p>
+          <p class="text-body-1 mb-2 text-white">
+            Êtes-vous sûr de vouloir supprimer cette validation ?
+          </p>
           <p class="text-body-2 text-grey">
             Cette action est irréversible et supprimera définitivement les données de cette session.
           </p>
@@ -58,6 +60,10 @@ const cancel = () => {
 
 <style lang="scss" scoped>
 .delete-card {
-  background-color: #00231f !important;
+  background: linear-gradient(180deg, #0a796c, #083f39);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  flex-direction: column;
 }
 </style>
