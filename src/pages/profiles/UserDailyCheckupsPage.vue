@@ -1,16 +1,18 @@
 <template>
   <div class="user-daily-checkups-page">
     <div class="page-header mb-6">
+      
+              <div class="d-flex align-center">
+                <PrimaryButton color="secondary" size="large" @click="goBack">
+                  <v-icon start>mdi-arrow-left</v-icon>
+                  Retour
+                </PrimaryButton>
+              </div>
       <div class="d-flex align-center justify-space-between">
         <div>
           <h1 class="page-title">Daily Checkups</h1>
           <p class="page-subtitle" v-if="user">{{ user.name || 'Utilisateur' }}</p>
         </div>
-
-        <v-btn color="secondary" size="large" @click="goBack" class="back-btn">
-          <v-icon start>mdi-arrow-left</v-icon>
-          Retour
-        </v-btn>
       </div>
 
       <div class="stats-overview mt-4">
@@ -124,7 +126,12 @@
       </div>
     </div>
 
-    <DailyCheckupModal v-model="showModal" :checkup-data="selectedCheckup" :view-mode="true" disabled="true" />
+    <DailyCheckupModal
+      v-model="showModal"
+      :checkup-data="selectedCheckup"
+      :view-mode="true"
+      disabled="true"
+    />
   </div>
 </template>
 
@@ -363,17 +370,6 @@ watch(
     color: #666;
     font-size: 1.1rem;
     margin: 0;
-  }
-}
-
-.back-btn {
-  background: linear-gradient(135deg, #6b7280, #9ca3af) !important;
-  color: white !important;
-  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3);
-
-  &:hover {
-    box-shadow: 0 6px 16px rgba(107, 114, 128, 0.4);
-    transform: translateY(-1px);
   }
 }
 

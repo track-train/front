@@ -13,7 +13,6 @@
           :items="planTypes"
           item-title="text"
           item-value="value"
-
           class="mb-4"
         >
           <template #prepend-inner>
@@ -21,12 +20,7 @@
           </template>
         </v-select>
 
-        <v-text-field
-          v-model="planName"
-          label="Nom du plan"
-          required
-          class="mb-4"
-        />
+        <v-text-field v-model="planName" label="Nom du plan" required class="mb-4" />
 
         <v-card v-if="planType === PLAN_TYPE_MACRO" class="pa-4">
           <v-card-title class="pa-0 mb-3">
@@ -67,12 +61,7 @@
               />
             </v-col>
             <v-col cols="6">
-              <v-text-field
-                v-model.number="macroForm.water"
-                label="Eau"
-                type="number"
-                suffix="L"
-              />
+              <v-text-field v-model.number="macroForm.water" label="Eau" type="number" suffix="L" />
             </v-col>
             <v-col cols="6">
               <v-text-field
@@ -85,12 +74,7 @@
           </v-row>
         </v-card>
 
-        <v-card
-          v-if="planType === PLAN_TYPE_MEAL"
-
-          class="pa-4"
-          style="position: relative"
-        >
+        <v-card v-if="planType === PLAN_TYPE_MEAL" class="pa-4" style="position: relative">
           <v-card-title class="pa-0 mb-3">
             <span class="text-subtitle-1">Exemple pour mealplan</span>
           </v-card-title>
@@ -119,7 +103,6 @@
                   <v-text-field
                     v-model="meal.timing"
                     label="Heure"
-
                     placeholder="12:30"
                     @click="openTimePicker(index)"
                     readonly
@@ -142,12 +125,7 @@
             </div>
           </div>
           <VSpacer />
-          <PrimaryButton
-            prepend-icon="mdi-plus"
-            size="small"
-            class="mt-2"
-            @click="addMeal"
-          >
+          <PrimaryButton prepend-icon="mdi-plus" size="small" class="mt-2" @click="addMeal">
             Ajout
           </PrimaryButton>
         </v-card>
@@ -166,7 +144,12 @@
       <v-card class="diet-plan-dialog">
         <v-card-title>Sélectionner l'heure</v-card-title>
         <v-card-text>
-          <v-time-picker v-model="selectedTime" title="Sélectionner une heure" format="24hr" scrollable />
+          <v-time-picker
+            v-model="selectedTime"
+            title="Sélectionner une heure"
+            format="24hr"
+            scrollable
+          />
         </v-card-text>
         <v-card-actions>
           <v-spacer />
@@ -335,6 +318,10 @@ const submit = async () => {
 }
 
 .diet-plan-dialog {
-  background-color: #00231f !important;
+  background: linear-gradient(180deg, #0a796c, #083f39);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  flex-direction: column;
 }
 </style>

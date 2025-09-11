@@ -737,7 +737,6 @@ const cancelDelete = () => {
   border-right: 1px solid #e0e0e0;
 }
 
-
 .date-shortcuts {
   flex-wrap: wrap;
 }
@@ -765,7 +764,11 @@ const cancelDelete = () => {
   transition: all 0.3s ease;
   border-radius: 8px;
   height: 100%;
-  background-color: #00231f !important;
+  background: linear-gradient(180deg, #0a796c, #083f39);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  flex-direction: column;
 }
 
 .validation-card:hover {
@@ -807,7 +810,7 @@ const cancelDelete = () => {
 }
 
 .slide-controls {
-  background:  #00231f;
+  background: #00231f;
   border-radius: 20px;
   padding: 8px 12px;
 }

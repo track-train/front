@@ -218,7 +218,7 @@
               </div>
             </v-col>
             <v-col cols="12" md="6">
-              <v-text-field :model-value="user.id" label="ID" readonly  />
+              <v-text-field :model-value="user.id" label="ID" readonly />
             </v-col>
 
             <v-col cols="12" md="6">
@@ -226,7 +226,6 @@
                 :model-value="formatDate(user.created_at)"
                 label="Date de création"
                 readonly
-
               />
             </v-col>
           </v-row>
@@ -296,7 +295,6 @@ watch(
 )
 
 const onFieldBlur = async (field) => {
-
   if (editedUser.value[field] === originalUser.value[field]) {
     return
   }
@@ -456,6 +454,19 @@ const formatDate = (dateString) => {
 }
 
 .user-detail-modal {
-  background-color: #00231f !important;
+  background: linear-gradient(180deg, #0a796c, #083f39);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+
+  &.mobile {
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
+  }
 }
 </style>
