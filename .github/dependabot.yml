@@ -1,0 +1,39 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"              
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps"
+      prefix-development: "deps-dev"
+      include: "scope"
+    groups:
+      frontend-deps:
+        patterns:
+          - "vue*"
+          - "vuetify*"
+          - "vite*"
+          - "pinia*"
+          - "vue-router*"
+        update-types:
+          - "minor"
+          - "patch"
+      dev-deps:
+        patterns:
+          - "@vue*"
+          - "eslint*"
+          - "prettier*"
+          - "vitest*"
+        update-types:
+          - "minor"
+          - "patch"
+    assignees:
+      - "Baptiste-Ferrand"
+    labels:
+      - "dependencies"
+      - "automated"
